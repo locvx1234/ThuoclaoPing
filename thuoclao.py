@@ -15,7 +15,7 @@ def cmd_fping():
     hosts = ['192.168.100.30', '192.168.100.31',
              '192.168.100.57', '192.168.100.134',
              '192.168.100.58', 'dantri.vn', '8.8.8.8',
-             'facebook.com', 'youtube.com', '192.168.100.104' ]
+             'facebook.com', 'youtube.com', '192.168.100.104']
     cmd.extend(hosts)
 
     return cmd
