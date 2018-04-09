@@ -11,19 +11,20 @@ fping_regex = re.compile(
 def cmd_fping():
     number_packet = '3'
     cmd = ['fping', '-c', '{}'.format(number_packet)]
+
     hosts = ['192.168.100.30', '192.168.100.31',
              '192.168.100.57', '192.168.100.134',
              '192.168.100.58', 'dantri.vn', '8.8.8.8',
              'facebook.com', 'youtube.com', '192.168.100.104' ]
     cmd.extend(hosts)
+
     return cmd
 
 
 def exc():
     cmd = cmd_fping()
-    print(cmd)
     result = subprocess.run(cmd,stderr=subprocess.PIPE)
-    result_lines = result.stderr.decode("utf-8")
+    result_lines = result.stderr.decode("utf-8").strip().strip().split("\n\n")[1]
     list_lines = []
     for line in result_lines.split('\n'):
         list_lines.append(line)
@@ -43,7 +44,7 @@ def write_influxdb(data, host_db= None, port= None, username= None,
         {
             "measurement": "fping",
             "tags": {
-                "host": str(data.group("host")) if data.group("host") else 0
+                "host": str(data.group("host"))
             },
             "fields": {
                "sent": int(data.group("sent")) if data.group("sent") else 0,
@@ -55,7 +56,6 @@ def write_influxdb(data, host_db= None, port= None, username= None,
             }
         }
     ]
-    # print(str(data.group("host")))
     client.write_points(json_body)
 
 
@@ -68,3 +68,4 @@ def main():
 
 
 main()
+
