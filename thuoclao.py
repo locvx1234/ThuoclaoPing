@@ -9,13 +9,13 @@ fping_regex = re.compile(
 
 
 def cmd_fping():
-    number_packet = '20'
+    number_packet = '3'
     cmd = ['fping', '-c', '{}'.format(number_packet)]
     hosts = ['192.168.100.30', '192.168.100.31',
              '192.168.100.57', '192.168.100.134',
              '192.168.100.58', 'dantri.vn', '8.8.8.8',
              'facebook.com', 'youtube.com', '192.168.100.104' ]
-    cmd.extend([host for host in hosts])
+    cmd.extend(hosts)
     return cmd
 
 
@@ -32,10 +32,10 @@ def exc():
 
 def write_influxdb(data, host_db= None, port= None, username= None,
                    password= None, database= None):
-    host_db = host_db or '192.168.100.57'
+    host_db = host_db or '192.168.40.120'
     port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
+    username = username or 'locvu'
+    password = password or '123456'
     database = database or 'thuoclao'
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
