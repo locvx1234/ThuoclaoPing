@@ -1,8 +1,6 @@
 import requests
-from bs4 import BeautifulSoup
 import time
 from influxdb import InfluxDBClient
-import sys
 import threading
 
 
@@ -20,11 +18,10 @@ def hit_site(url):
     except requests.exceptions.RequestException as e:  # This is the correct syntax
         print(e)
         pass
-        # sys.exit(1)
 
 
-def write_influxdb(data, host_db= None, port= None, username= None,
-                   password= None, database= None):
+def write_influxdb(data, host_db=None, port=None, username= None,
+                   password=None, database=None):
     host_db = host_db or '192.168.40.120'
     port = port or 8086
     username = username or 'locvu'
@@ -52,7 +49,7 @@ def http_check():
             'https://facebook.com', 'https://youtube.com', 'http://192.168.100.114', 'https://youtube.com/hihi']
     for url in urls:
         data = hit_site(url)
-        if data != None:
+        if data is not None:
             # print(data)
             write_influxdb(data=data)
     return
