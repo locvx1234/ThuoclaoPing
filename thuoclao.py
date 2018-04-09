@@ -19,7 +19,7 @@ def cmd_fping():
 def exc():
     cmd = cmd_fping()
     result = subprocess.run(cmd,stderr=subprocess.PIPE)
-    result_lines = result.stderr.decode("utf-8").strip().strip().split("\n\n")[1]
+    result_lines = result.stderr.decode("utf-8").strip()
     list_lines = []
     for line in result_lines.split('\n'):
         list_lines.append(line)
@@ -37,7 +37,7 @@ def write_influxdb(data, host_db= None, port= None, username= None,
                             password=password, database=database)
     json_body = [
         {
-            "measurement": "fping",
+            "measurement": "thuoclao",
             "tags": {
                 "host": str(data.group("host"))
             },
