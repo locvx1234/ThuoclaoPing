@@ -1,0 +1,3 @@
+# Ignore Pycharm's folder
+.idea/*
+__pycache__/*
