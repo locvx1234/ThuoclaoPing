@@ -36,8 +36,60 @@
                                     <td>
                                         <div class="col-xs-12 agent-row">
                                           <div class="control-link col-xs-3">
-                                            <a href="#">Config Settings</a>
-                                            <a onclick="return confirm('Are you sure you want to delete this item?');" href="#">Remove Service</a>
+                                              <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#config{{service.id}}Modal">Config Settings</button>
+                                              <div id="config{{service.id}}Modal" class="modal fade" role="dialog">
+                                                  <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content" style="background-color:#ffffff">
+                                                  <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Edit service {{ service.service_name }}</h4>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    <form data-parsley-validate class="form-horizontal form-label-left" method="post" action="{% url 'config_service' service.id %}">
+                                                    {% csrf_token %}
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">OK</label>
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input type="text" name="ok" value={{ service.ok }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">Warning</label>
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input type="text" name="warning" value={{ service.warning }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">Critical</label>
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input type="text" name="critical" value={{ service.critical }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">Interval check</label>
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input type="text" name="interval_check" value={{ service.interval_check }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <div class="ln_solid"></div>
+                                                        <div class="form-group">
+                                                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                            <!-- <button class="btn btn-primary" type="button">Cancel</button> -->
+                                                            <button class="btn btn-primary" type="reset">Reset</button>
+                                                            <button type="submit" class="btn btn-success">Submit</button>
+                                                          </div>
+                                                        </div>
+                                                    </form>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              </div>
+                                              <a onclick="return confirm('Are you sure?');" href="{% url 'remove_service' service.id %}">Remove Service</a>
                                           </div>
                                         </div>
                                     </td>
@@ -52,54 +104,10 @@
     </div>
 </div>
 
-
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add New Service</h4>
-      </div>
-      <div class="modal-body">
-	    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
-		{% csrf_token %}
-                <div class="form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Service <span class="required">*</span>
-                  </label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="service" required="required" class="form-control col-md-7 col-xs-12">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label  class="control-label col-md-3 col-sm-3 col-xs-12">XXX <span class="required">*</span></label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="ip-host" required="required" class="form-control col-md-7 col-xs-12">
-                  </div>
-                </div>
-                <div class="ln_solid"></div>
-                <div class="form-group">
-                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                    <!-- <button class="btn btn-primary" type="button">Cancel</button> -->
-                    <button class="btn btn-primary" type="reset">Reset</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
-                  </div>
-                </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
 {% endblock content %}
 
 {% block javascripts %}
   {{ block.super}}
-  <!--<script src="{% static '/build/js/host.js' %}"></script>-->
   <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
   <script type="text/javascript">
@@ -107,22 +115,7 @@
     $('#example').DataTable();
   } );
   </script>
-  <!-- gauge.js -->
-  <script src="{% static '/vendors/gauge.js/dist/gauge.min.js' %}"></script>
-  <!-- Skycons -->
-  <script src="{% static '/vendors/skycons/skycons.js' %}"></script>
-  <!-- Flot -->
-  <script src="{% static '/vendors/Flot/jquery.flot.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.pie.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.time.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.stack.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.resize.js' %}"></script>
-  <!-- Flot plugins -->
-  <script src="{% static '/vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>
-  <script src="{% static '/vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>
-  <script src="{% static '/vendors/flot.curvedlines/curvedLines.js' %}"></script>
-  <!-- DateJS -->
-  <script src="{% static '/vendors/DateJS/build/date.js' %}"></script>
+
   <!-- JQVMap -->
   <script src="{% static '/vendors/jqvmap/dist/jquery.vmap.js' %}"></script>
   <script src="{% static '/vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>

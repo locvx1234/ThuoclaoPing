@@ -29,7 +29,7 @@ Clone and install dependences :
 Create databate : 
 
 ```
-(env)$ python manage.py makemigratetions
+(env)$ python manage.py makemigrations
 (env)$ python manage.py migrate
 ```
 

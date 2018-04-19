@@ -4,11 +4,17 @@
 {% load static %}
 {% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="{% static '/build/css/config.css' %}">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
-  {{ block.super }}
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">-->
+<link href="{% static '/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static '/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static '/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static '/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static '/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
+{{ block.super }}
 {% endblock stylesheets %}
 
 {% block content %}
+
 <div class="right_col" role="main">
     <div class="col-xs-6">
         <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
@@ -22,12 +28,11 @@
             <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
-              <h2>Hosts</h2>
-
-              <div class="clearfix"></div>
-            </div>
+                    <h2>Hosts</h2>
+                    <div class="clearfix"></div>
+                </div>
                     <div class="x_content">
-                        <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -37,29 +42,84 @@
                             </thead>
                             <tbody>
                                 {% for host in hosts %}
-                                  <tr>
-                                      <td>
-                                          <div>
-                                              {{ host }}
-                                          </div>
-                                      </td>
-                                      <td>
-                                          <div>
-                                              {% for service in host.service_set.all %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            {{ host }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {% for service in host.service_set.all %}
                                                 {{ service }}
                                                 <br>
-                                              {% endfor %}
-                                          </div>
-                                      </td>
-                                      <td>
-                                          <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
-                                          <a href="#" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
-                                          <a href="#" class="btn btn-danger btn-xs"
-                                             onclick="return confirm('Are you sure you want to delete this item?');" >
-                                              <i class="fa fa-trash-o"></i> Delete
-                                          </a>
-                                      </td>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <a href="#" class="btn btn-xs"><i class="fa fa-folder"></i> View </a>
+                                            <a href="#" class="btn btn-xs" data-toggle="modal" data-target="#edit{{host.id}}Modal"><i class="fa fa-pencil"></i> Edit </a>
+
+                                            <a href="{% url 'delete_host' host.id %}" class="btn btn-xs"
+                                                 onclick="return confirm('Are you sure you want to delete this host?');" >
+                                                  <i class="fa fa-trash-o"></i> Delete
+                                            </a>
+                                        </div>
+
+                                        <div id="edit{{host.id}}Modal" class="modal fade" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Edit host {{ host.hostname }}</h4>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    <form id="form-edit" data-parsley-validate class="form-horizontal form-label-left" method="post" action="{% url 'edit_host' host.id %}">
+                                                    {% csrf_token %}
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">Hostname</label>
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input type="text" name="hostname" value={{ host.hostname }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="form-group">
+                                                          <label  class="control-label col-md-3 col-sm-3 col-xs-12">IP Address</label>
+                                                          <div class="col-md-3 col-sm-3 col-xs-6">
+                                                            <input type="text" name="ip-host" value={{ host.ip_address }} required="required" class="form-control col-md-7 col-xs-12">
+                                                          </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                          <label  class="control-label col-md-3 col-sm-3 col-xs-12">Service</label>
+                                                          <p style="padding: 5px;">
+                                                              <input type="checkbox" name="service_ping" value="ping" class="flat" /> PING
+                                                              <br />
+                                                              <input type="checkbox" name="service_http" value="http" class="flat" /> HTTP
+                                                              <br />
+                                                          <p>
+                                                        </div>
+                                                        <div class="ln_solid"></div>
+                                                        <div class="form-group">
+                                                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                            <!-- <button class="btn btn-primary" type="button">Cancel</button> -->
+                                                            <button class="btn btn-primary" type="reset">Reset</button>
+                                                            <button type="submit" class="btn btn-success">Submit</button>
+                                                          </div>
+                                                        </div>
+                                                    </form>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                        </div>
+                                    </td>
                                 </tr>
+
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -81,7 +141,7 @@
         <h4 class="modal-title">Add New Host</h4>
       </div>
       <div class="modal-body">
-	    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
+	    <form id="form-new" data-parsley-validate class="form-horizontal form-label-left" method="post">
 		{% csrf_token %}
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12">Hostname <span class="required">*</span>
@@ -95,6 +155,15 @@
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="ip-host" required="required" class="form-control col-md-7 col-xs-12">
                   </div>
+                </div>
+                <div class="form-group">
+                  <label  class="control-label col-md-3 col-sm-3 col-xs-12">Service</label>
+                  <p style="padding: 5px;">
+                      <input type="checkbox" name="service_ping" value="ping" class="flat" /> PING
+                      <br />
+                      <input type="checkbox" name="service_http" value="http" class="flat" /> HTTP
+                      <br />
+                  <p>
                 </div>
                 <div class="ln_solid"></div>
                 <div class="form-group">
@@ -117,32 +186,40 @@
 
 {% block javascripts %}
   {{ block.super}}
-  <script src="{% static '/build/js/host.js' %}"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function() {
-    $('#example').DataTable();
-  } );
-  </script>
+  <!--<script src="{% static '/build/js/host.js' %}"></script>-->
+  <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-buttons/js/buttons.flash.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js' %}"></script>
+  <script src="{% static '/vendors/datatables.net-scroller/js/dataTables.scroller.min.js' %}"></script>
+  <script src="{% static '/vendors/jszip/dist/jszip.min.js' %}"></script>
+  <script src="{% static 'c/vendors/pdfmake/build/pdfmake.min.js' %}"></script>
+  <script src="{% static '/vendors/pdfmake/build/vfs_fonts.js' %}"></script>
   <!-- gauge.js -->
-  <script src="{% static '/vendors/gauge.js/dist/gauge.min.js' %}"></script>
+  <!--<script src="{% static '/vendors/gauge.js/dist/gauge.min.js' %}"></script>-->
   <!-- Skycons -->
-  <script src="{% static '/vendors/skycons/skycons.js' %}"></script>
+  <!--<script src="{% static '/vendors/skycons/skycons.js' %}"></script>-->
   <!-- Flot -->
-  <script src="{% static '/vendors/Flot/jquery.flot.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.pie.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.time.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.stack.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.resize.js' %}"></script>
+  <!--<script src="{% static '/vendors/Flot/jquery.flot.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/Flot/jquery.flot.pie.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/Flot/jquery.flot.time.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/Flot/jquery.flot.stack.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/Flot/jquery.flot.resize.js' %}"></script>-->
   <!-- Flot plugins -->
-  <script src="{% static '/vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>
-  <script src="{% static '/vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>
-  <script src="{% static '/vendors/flot.curvedlines/curvedLines.js' %}"></script>
+  <!--<script src="{% static '/vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/flot.curvedlines/curvedLines.js' %}"></script>-->
   <!-- DateJS -->
-  <script src="{% static '/vendors/DateJS/build/date.js' %}"></script>
+  <!--<script src="{% static '/vendors/DateJS/build/date.js' %}"></script>-->
   <!-- JQVMap -->
-  <script src="{% static '/vendors/jqvmap/dist/jquery.vmap.js' %}"></script>
-  <script src="{% static '/vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
-  <script src="{% static '/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>
+  <!--<script src="{% static '/vendors/jqvmap/dist/jquery.vmap.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>-->
+  <!--<script src="{% static '/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>-->
 {% endblock javascripts %}
