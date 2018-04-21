@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views
+from check import views
 
 urlpatterns = [
     url(r'^.*\.html', views.view_html, name='view_html'),

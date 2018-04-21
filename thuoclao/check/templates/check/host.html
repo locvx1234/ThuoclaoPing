@@ -62,7 +62,7 @@
                                             <a href="#" class="btn btn-info btn-xs" data-toggle="modal" data-target="#edit{{host.id}}Modal"><i class="fa fa-pencil"></i> Edit </a>
 
                                             <a href="{% url 'delete_host' host.id %}" class="btn btn-danger btn-xs"
-                                                 onclick="return confirm('Are you sure you want to delete this host?');" >
+                                                 onclick="return confirm('Are you sure you want to delete {{host.hostname}} ?');" >
                                                   <i class="fa fa-trash-o"></i> Delete
                                             </a>
                                         </div>

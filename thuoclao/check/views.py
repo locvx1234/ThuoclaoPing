@@ -3,8 +3,10 @@ from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
+from pprint import pprint
 
 from .models import Host, Service
+from lib.display_metric import Display
 
 
 def index(request):
@@ -18,6 +20,11 @@ def index(request):
         context['services'] = services
         context['count_host'] = len(hosts)
         context['count_service'] = len(services)
+
+        display = Display('ping', '8.8.8.8', 'minhkma', '1m')
+        res = display.select()
+        pprint(res)
+        context['res'] = res
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')

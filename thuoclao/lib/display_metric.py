@@ -1,6 +1,5 @@
-import utils
 from pprint import pprint
-
+from lib import utils
 
 class Display(utils.Auth):
     def __init__(self, service_name, IP, user, range_time):
@@ -25,6 +24,6 @@ class Display(utils.Auth):
         return results
 
 
-display = Display('ping', '8.8.8.8', 'minhkma', '1m')
-res = display.select()
-pprint(res)
+# display = Display('ping', '8.8.8.8', 'minhkma', '1m')
+# res = display.select()
+# pprint(res)
