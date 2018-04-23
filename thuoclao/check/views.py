@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
 from pprint import pprint
-
+import json
 from .models import Host, Service
 from lib.display_metric import Display
 
@@ -20,14 +20,23 @@ def index(request):
         context['services'] = services
         context['count_host'] = len(hosts)
         context['count_service'] = len(services)
-
-        display = Display('ping', '8.8.8.8', 'minhkma', '1m')
-        res = display.select()
-        pprint(res)
-        context['res'] = res
+        #
+        # display = Display('ping', '8.8.8.8', 'minhkma', '1m')
+        # res = display.select()
+        # pprint(res)
+        # context['res'] = res
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
+
+
+def get_data(request):
+    display = Display('ping', '8.8.8.8', 'minhkma', '10m')
+    res = display.select()
+    json_data = json.dumps(res)
+    pprint(res)
+    # return HttpResponse('Hello World!')
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def view_html(request):

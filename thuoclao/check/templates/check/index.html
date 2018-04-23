@@ -60,9 +60,7 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo id incidunt nemo totam. Distinctio excepturi exercitationem quae voluptas voluptatum?
-
+                  <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
                 </div>
               </div>
             </div>
@@ -70,7 +68,11 @@
         {% endfor %}
 
         <div class="clearfix"></div>
-
+        {% if graph %}
+        <div style="width:600;height:500">
+        {{ graph|safe }}
+        </div>
+        {% endif %}
       </div>
 
 
@@ -79,6 +81,8 @@
 
 {% block javascripts %}
   {{ block.super}}
+  <script src="{% static '/build/js/dashboard.js' %}"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
   <!-- Chart.js -->
   <script src="{% static '/vendors/Chart.js/dist/Chart.min.js' %}"></script>
   <!-- gauge.js -->

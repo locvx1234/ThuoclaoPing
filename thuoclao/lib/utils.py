@@ -30,5 +30,7 @@ class Auth(GetConfig):
 
 # auth_test = Auth()
 # client = auth_test.auth()
-# data = client.query('select * from fping where host=\'192.168.100.30\' and time > now() - 1m')
+# data = client.query('select * from ping where host=\'8.8.8.8\' and time > now() - 1m', epoch=True)
 # print(data)
+# print("==========")
+# print(data.raw)
