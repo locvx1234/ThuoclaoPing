@@ -60,7 +60,7 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+                  <div id="chartContainer.{{ item.pk }}.{{ service.service_name }}" class="graph" style="height: 300px; width: 100%;"></div>
                 </div>
               </div>
             </div>
@@ -81,6 +81,9 @@
 
 {% block javascripts %}
   {{ block.super}}
+<!--<script>-->
+  <!--var services = "{{ services }}";-->
+<!--</script>-->
   <script src="{% static '/build/js/dashboard.js' %}"></script>
   <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
   <!-- Chart.js -->

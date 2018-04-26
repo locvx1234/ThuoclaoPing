@@ -31,16 +31,22 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Info</th>
+                                    <th>Host</th>
+                                    <th>Operation</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for service in services %}
                                   <tr>
-                                    <td>{{ service }}</td>
-                                    <td>
-                                        <div class="col-xs-12 agent-row">
-                                          <div class="control-link col-xs-3">
+                                      <td>{{ service }}</td>
+                                      <td>
+                                          {% for host in service.host.all %}
+                                          <div>
+                                              {{ host.hostname }}
+                                          </div>
+                                          {% endfor %}
+                                      </td>
+                                      <td><div class="control-link col-xs-3">
                                               <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#config{{service.id}}Modal">Config Settings</button>
                                               <div id="config{{service.id}}Modal" class="modal fade" role="dialog">
                                                   <div class="modal-dialog">
@@ -94,9 +100,7 @@
                                                   </div>
                                               </div>
                                               <a onclick="return confirm('Are you sure?');" href="{% url 'remove_service' service.id %}">Remove Service</a>
-                                          </div>
-                                        </div>
-                                    </td>
+                                          </div></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

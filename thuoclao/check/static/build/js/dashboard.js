@@ -1,16 +1,20 @@
 $(window).load(function(){
     // Ajax Code Here
-    (function update() {
+    $("div.graph").each(function(){
+        var id_chart = $(this).attr("id");
+        var pk_host = id_chart.split('.')[1];
+        var service_name = id_chart.split('.')[2];
+
+        (function update() {
         $.ajax({
 //            url: '{% url "get_data" %}',
-            url: '/ajax/get_data',
+            url: '/ajax/get_data/' + pk_host + '/' + service_name,
             dataType: 'json',
             success: function (data) {
 //                alert(data[0]['max']);
-
                 var dps_max = [];
                 var dps_min = [];
-                var chart = new CanvasJS.Chart("chartContainer1", {
+                var chart = new CanvasJS.Chart(id_chart, {
                     exportEnabled: true,
                     title: {
 //                        text: "HOST"
@@ -40,9 +44,6 @@ $(window).load(function(){
                 var xVal = data[0]['time'];
                 var yMaxVal = data[0]['max'];
                 var yMinVal = data[0]['min'];
-                console.log(xVal);
-                console.log(yMaxVal);
-                console.log(yMinVal);
 //                var updateInterval = 1000;
                 var dataLength = data.length;
                 var updateChart = function (count) {
@@ -78,5 +79,7 @@ $(window).load(function(){
            setTimeout(update, 1000);  // function refers to itself
         });
     })();
+    });
+
 });
 

@@ -35,10 +35,10 @@ class Service(models.Model):
     service_name = models.CharField(max_length=45, choices=SERVICE_CHOICES)
     host = models.ManyToManyField('Host')
 
-    ok = models.IntegerField(help_text="", blank=True)
-    warning = models.IntegerField(help_text="", blank=True)
-    critical = models.IntegerField(help_text="", blank=True)
-    interval_check = models.IntegerField(help_text="", blank=True)
+    ok = models.IntegerField(help_text="", null=True, blank=True)
+    warning = models.IntegerField(help_text="", null=True, blank=True)
+    critical = models.IntegerField(help_text="", null=True, blank=True)
+    interval_check = models.IntegerField(help_text="", null=True, blank=True)
 
     def __str__(self):
         return str(self.service_name)

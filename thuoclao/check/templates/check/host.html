@@ -95,16 +95,19 @@
                                                         <div class="form-group">
                                                           <label  class="control-label col-md-3 col-sm-3 col-xs-12">Service</label>
                                                           <div class="col-md-6 col-sm-6 col-xs-12">
-                                                              {% with 'PING HTTP' as list %}
-                                                              {% for service in list.split %}
+
+                                                              {% for service in services %}
                                                                     <br>
                                                                     <input type="checkbox" name="checks[]"
-                                                                           value={{service.lower}} class="flat"
-
+                                                                           class="flat"
+                                                                           value={{service.service_name}}
+                                                                    {% if service in host.service_set.all %}
+                                                                           checked
+                                                                    {% endif %}
                                                                     /> {{service}}
                                                                     <br>
                                                               {% endfor %}
-                                                              {% endwith %}
+
                                                           </div>
                                                         </div>
                                                         <div class="ln_solid"></div>
