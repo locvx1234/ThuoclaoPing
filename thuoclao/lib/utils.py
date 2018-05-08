@@ -1,8 +1,11 @@
 import configparser
 from influxdb import InfluxDBClient
+from django.contrib.auth.models import User
+from thuoclao.check.models import Host, Service
 
 
 class GetConfig(object):
+
     def get_config(self, config_file):
         config = configparser.ConfigParser()
         config.read(config_file)
@@ -26,6 +29,24 @@ class Auth(GetConfig):
         client = InfluxDBClient(host=host_db, port= port, username=username,
                                 password=password, database=database)
         return client
+
+
+class Sqlite(object):
+    def get_sql(self):
+        dict_users = {}
+        users = User.objects.all()
+        for user in users:
+            dict_hosts = {}
+            hosts = Host.objects.filter(user_id= user.id)
+            services = Service.objects.filter(host__in= hosts).distinct()
+            for ser in services:
+                IPs = []
+                for ser_info in ser.host.all():
+                    IPs.append(ser_info.ip_address)
+                dict_hosts[ser.service_name] = IPs
+            dict_users[user.username] = dict_hosts
+        return dict_users
+
 
 
 # auth_test = Auth()
