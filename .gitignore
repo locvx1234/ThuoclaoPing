@@ -1,5 +1,6 @@
 *.pyc
-__pycache__/
+**/__pycache__/
+**/migrations/
 .idea/*
 .DS_Store
 .vscode

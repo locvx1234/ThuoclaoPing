@@ -15,7 +15,7 @@ class Display(utils.Auth):
                      ' where \"host\" = \'{}\''
                      ' and \"user\" = \'{}\' and time > now() - {}'
                      .format(self.service_name, self.ip,
-                             self.user, self.range_time))
+                             self.user, self.range_time), epoch='ms')
         # print(data)
         results = list(data.get_points(measurement='ping'))
         # results = list(data.get_points(measurement='{}'

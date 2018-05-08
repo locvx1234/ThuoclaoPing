@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
 from pprint import pprint
-
+import json
 from .models import Host, Service
 from lib.display_metric import Display
 
@@ -20,14 +20,20 @@ def index(request):
         context['services'] = services
         context['count_host'] = len(hosts)
         context['count_service'] = len(services)
-
-        display = Display('ping', '8.8.8.8', 'minhkma', '1m')
-        res = display.select()
-        pprint(res)
-        context['res'] = res
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
+
+
+def get_data(request, pk_host, service_name):
+    display = Display('ping', '8.8.8.8', 'minhkma', '10m')
+    res = display.select()
+    json_data = json.dumps(res)
+    # pprint(res)
+    print(pk_host)
+    print(service_name)
+    # return HttpResponse('Hello World!')
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def view_html(request):
@@ -47,6 +53,7 @@ def host(request):
     list_service = [service.service_name for service in services]   # ex ['HTTP', 'PING']
     context['list_service'] = list_service
     context['hosts'] = hosts
+    context['services'] = services
     if request.method == 'POST':
         hostname = request.POST.get('hostname')
         ip_address = request.POST.get('ip-host')
@@ -68,25 +75,41 @@ def host(request):
 
 
 def delete_host(request, host_id):
-    host_data = Host.objects.filter(id=host_id)
-    host_data.delete()
+    host_data_query = Host.objects.filter(id=host_id)
+    host_data_query.delete()
     return HttpResponseRedirect(reverse('host'))
 
 
 def edit_host(request, host_id):
-    host_data = Host.objects.filter(id=host_id)
+    host_data_query = Host.objects.filter(id=host_id)
     user = User.objects.get(username=request.user.username)
-    # services = Service.objects.filter(host__in=hosts).distinct()
+    hosts = Host.objects.filter(user_id=user.id)
+    services = Service.objects.filter(host__in=hosts).distinct()    # cac service hien co cua user do
+    services_name = [service.service_name for service in services]
 
     if request.method == 'POST':
+        # update host
         hostname = request.POST.get('hostname')
         ip_address = request.POST.get('ip-host')
-        host_data.update(hostname=hostname, ip_address=ip_address, user=user)
-        check = request.POST.getlist('checks[]')
-        # for item in check:
-        #     for service in services:
-        #         if service.service_name.lower() == item:
-        #             service.host.add(host_data.id)
+        host_data_query.update(hostname=hostname, ip_address=ip_address, user=user)
+
+        # update service
+        host_data = Host.objects.get(id=host_id)
+        checked = [element for element in request.POST.getlist('checks[]')]  # service_name
+        for item in checked:
+            if item in services_name:  # update
+
+                service = services.get(service_name=item)
+
+                service.host.add(host_data)
+            # else:  # add new
+            #     service_data = Service(service_name=item[0], ok=0, warning=0, critical=0, interval_check=0)
+            #     service_data.save()
+            #     service_data.host.add(host_data.id)
+        uncheck_list = list(set(services_name) - set([item for item in checked]))
+        for item_uncheck in uncheck_list:
+            service = services.get(service_name=item_uncheck)
+            service.host.remove(host_data)
     return HttpResponseRedirect(reverse('host'))
 
 
