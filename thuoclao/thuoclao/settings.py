@@ -134,6 +134,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     ('check', os.path.join(BASE_DIR, 'check', 'static')),
+    ('accounts', os.path.join(BASE_DIR, 'accounts', 'static')),
 ]
 
 LOGIN_REDIRECT_URL = 'index'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
