@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    description = models.CharField(max_length=100, blank=True)
+    description = models.CharField(max_length=1024, blank=True)
     city = models.CharField(max_length=100, blank=True)
     website = models.URLField(blank=True)
     phone = models.IntegerField(default=0)
