@@ -13,7 +13,7 @@ class Display(utils.Auth):
         # data = self.client.query('select * from fping where host=\'192.168.100.30\' and time > now() - 1m')
         data = self.client.query('select * from {}'
                      ' where \"host\" = \'{}\''
-                     ' and \"user\" = \'{}\' and time > now() - {}'
+                     ' and \"user\" = \'{}\' and time > now() - {}m'
                      .format(self.service_name, self.ip,
                              self.user, self.range_time), epoch='ms')
         # print(data)

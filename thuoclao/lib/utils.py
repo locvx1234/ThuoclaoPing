@@ -1,7 +1,7 @@
 import configparser
 from influxdb import InfluxDBClient
 from django.contrib.auth.models import User
-from thuoclao.check.models import Host, Service
+from check.models import Host, Service
 
 
 class GetConfig(object):

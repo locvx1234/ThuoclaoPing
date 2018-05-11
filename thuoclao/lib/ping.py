@@ -2,7 +2,7 @@ import subprocess
 import re
 import threading
 from influxdb import InfluxDBClient
-import thuoclao.lib.utils
+import lib.utils
 
 
 fping_regex = re.compile(

@@ -26,7 +26,9 @@ def index(request):
 
 
 def get_data(request, pk_host, service_name):
-    display = Display('ping', '8.8.8.8', 'minhkma', '10m')
+    host = Host.objects.get(id=pk_host)
+    service = host.service_set.get(service_name=service_name.lower())
+    display = Display(service_name.lower(), host.ip_address, host.user.username, service.interval_check)
     res = display.select()
     json_data = json.dumps(res)
     # pprint(res)
