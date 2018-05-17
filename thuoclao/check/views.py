@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from pprint import pprint
 import json
-from .models import Host, Service
+from .models import Host, Service, Alert
+from .forms import AlertForm
 from lib.display_metric import Display
 
 
@@ -139,3 +140,27 @@ def remove_service(request, service_id):
     service_data = Service.objects.filter(id=service_id)
     service_data.delete()
     return HttpResponseRedirect(reverse('service'))
+
+
+def alert(request):
+    try:
+        alert_data = Alert.objects.get(user=request.user)
+    except Alert.DoesNotExist:
+        alert_data = None
+
+    if request.method == 'POST':
+        print(request.user)
+        print(request.POST)
+        alert_form = AlertForm(request.POST, instance=alert_data)
+        if alert_form.is_valid():
+            email_alert = alert_form.data["email_alert"]
+            telegram_id = alert_form.data["telegram_id"]
+            webhook = alert_form.data["webhook"]
+            if alert_data:
+                alert_form.save()
+            else:
+                alert = Alert(user=request.user, email_alert=email_alert, telegram_id=telegram_id, webhook=webhook)
+                alert.save()
+        return HttpResponseRedirect(reverse('alert'))
+    context = {'alert': alert_data}
+    return render(request, 'check/alert.html', context)

@@ -1,0 +1,111 @@
+{% extends "base_site.html" %}
+
+{% block title %} Alert {% endblock title %}
+{% load static %}
+{% block stylesheets %}
+<!-- <link rel="stylesheet" type="text/css" href="{% static '/static/vendors/validator/fv.css' %}"> -->
+  {{ block.super }}
+{% endblock stylesheets %}
+{% load static %}
+{% block content %}
+
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Alert</h3>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_content">
+              <span class="section">Addition contact</span>
+              <form class="form-horizontal form-label-left" method="post" novalidate>
+                {% csrf_token %}
+               
+                <fieldset>
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                        <span>Name</span>   
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input class='optional form-control col-md-7 col-xs-12' data-validate-length-range="6" data-validate-words="2" name="name" placeholder="ex. John f. Kennedy" />
+                      </div>
+                      
+                    </div>
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                        <span>Name</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input data-validate-length-range="6" data-validate-words="2" name="name" placeholder="ex. John f. Kennedy"  class="optional form-control col-md-7 col-xs-12"/>
+                      </div>
+                    </div>
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                        <span>Email </span> 
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input  class="optional form-control col-md-7 col-xs-12" type="email" id="email_alert" name="email" value="{{alert.email_alert}}">
+                      </div>
+                    </div>
+                    <div class="field form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="webhook">Webhook URL</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="url" id="webhook" name="webhook" value="{{alert.webhook}}" placeholder="https://hooks.slack.com/services/xxx..." class="optional form-control col-md-7 col-xs-12">
+                    </div>
+                    </div>
+                    <div class="field form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telegram_id">Telegram ID</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" id="telegram_id" name="telegram_id" value="{{alert.telegram_id}}" data-validate-length="9" class="optional form-control col-md-7 col-xs-12">
+                    </div>
+                    </div>
+                </fieldset>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                  <div class="col-md-6 col-md-offset-3">
+                    <button type="submit" class="btn btn-primary">Cancel</button>
+                    <button id="send" type="submit" class="btn btn-success">Submit</button>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- validator -->
+  <script src="/static/vendors/validator/validator.js"></script>
+  <script>
+      // initialize a validator instance from the "FormValidator" constructor.
+          // A "<form>" element is optionally passed as an argument, but is not a must
+      var validator = new FormValidator({"events" : ['blur', 'input', 'change']}, document.forms[0]);
+          // on form "submit" event
+      document.forms[0].onsubmit = function(e){
+        var submit = true,
+          validatorResult = validator.checkAll(this);
+        console.log(validatorResult);
+        return !!validatorResult.valid;
+      };
+          // on form "reset" event
+          document.forms[0].onreset = function(e){
+              validator.reset();
+          };
+          // stuff related ONLY for this demo page:
+      $('.toggleValidationTooltips').change(function(){
+        validator.settings.alerts = !this.checked;
+        if( this.checked )
+          $('form .alert').remove();
+      }).prop('checked',false);
+    </script>
+{% endblock javascripts %}

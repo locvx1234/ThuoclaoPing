@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^service$', views.service, name='service'),
     url(r'^service/config/(?P<service_id>\d+)/$', views.config_service, name='config_service'),
     url(r'^service/remove/(?P<service_id>\d+)/$', views.remove_service, name='remove_service'),
-    url(r'^ajax/get_data/(?P<pk_host>\d+)/(?P<service_name>[-\w]+)/$', views.get_data, name='get_data')
+    url(r'^ajax/get_data/(?P<pk_host>\d+)/(?P<service_name>[-\w]+)/$', views.get_data, name='get_data'),
+    url(r'^alert$', views.alert, name='alert'),
 ]

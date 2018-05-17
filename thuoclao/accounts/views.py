@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .models import UserProfile
 from .forms import UserForm, UserProfileForm
+from django.contrib.admin.models import LogEntry
 
 
 def view_profile(request, pk=None):
@@ -14,7 +15,8 @@ def view_profile(request, pk=None):
         user = User.objects.get(pk=pk)
     else:
         user = request.user
-    context = {'user': user, 'form': form}
+        log = LogEntry.objects.select_related().all().order_by("id")
+    context = {'user': user, 'form': form, 'log':log}
     return render(request, 'accounts/profile.html', context)
 
 

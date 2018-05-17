@@ -3,16 +3,16 @@ from django.contrib.auth.models import User
 
 
 class Alert(models.Model):
-    service = models.OneToOneField('Service', on_delete=models.CASCADE, primary_key=True,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     email_alert = models.EmailField(max_length=100, blank=True)
     telegram_id = models.CharField(max_length=10, help_text="Telegram ID", blank=True)
     webhook = models.URLField(help_text="URL to send message into Slack.", blank=True)
 
     def __str__(self):
-        return str(self.service)
+        return str(self.user)
 
     class Meta:
-        ordering = ('service',)
+        ordering = ('user',)
 
 
 class Host(models.Model):
