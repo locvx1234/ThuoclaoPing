@@ -29,8 +29,8 @@ def index(request):
 def get_data(request, pk_host, service_name):
     host = Host.objects.get(id=pk_host)
     service = host.service_set.get(service_name=service_name.lower())
-    display = Display(service_name.lower(), host.ip_address, host.user.username, service.interval_check)
-    res = display.select()
+    display = Display(service_name.lower(), host.ip_address, host.user.username)
+    res = display.select(service.interval_check)
     json_data = json.dumps(res)
     # pprint(res)
     print(pk_host)
@@ -156,11 +156,14 @@ def alert(request):
             email_alert = alert_form.data["email_alert"]
             telegram_id = alert_form.data["telegram_id"]
             webhook = alert_form.data["webhook"]
+            delay_check = alert_form.data["delay_check"]
+
             if alert_data:
                 alert_form.save()
             else:
-                alert = Alert(user=request.user, email_alert=email_alert, telegram_id=telegram_id, webhook=webhook)
+                alert = Alert(user=request.user, email_alert=email_alert, telegram_id=telegram_id, webhook=webhook, delay_check=delay_check)
                 alert.save()
         return HttpResponseRedirect(reverse('alert'))
     context = {'alert': alert_data}
     return render(request, 'check/alert.html', context)
+

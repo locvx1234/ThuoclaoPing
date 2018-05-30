@@ -9,3 +9,4 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls')),
     url(r'^', include('check.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

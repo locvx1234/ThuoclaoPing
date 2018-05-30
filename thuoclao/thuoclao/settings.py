@@ -86,7 +86,7 @@ DATABASES = {
         'OPTIONS': {
 	    # 'read_default_file': '/etc/mysql/my.cnf',
         },
-	'NAME': 'thuoclao',
+	'NAME': 'thuoclao_locvu2',
 	'USER': 'thuoclao',
 	'PASSWORD': 'thuoclao',
 	'HOST': '192.168.30.61',
@@ -142,3 +142,9 @@ LOGIN_REDIRECT_URL = 'index'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
+
+FROM_EMAIL = 'poisonous1205@gmail.com'
+PASSWD_MAIL = 'minhnguyen'
+SMTP_SERVER = 'smtp.gmail.com:587'
+
+# BACKGROUND_TASK_RUN_ASYNC = True
