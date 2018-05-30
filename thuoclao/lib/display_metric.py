@@ -32,9 +32,9 @@ class Display(utils.Auth):
         results_status = list(data_status.get_points(measurement='ping'))
         val_status = results_status[0]['mean']
         time = results_status[0]['time']
-        if val_status > oke and val_status < warnning:
+        if val_status < oke:
             status_id = 0
-        elif val_status <= warnning and val_status < critical:
+        elif val_status < warnning:
             status_id = 1
         else:
             status_id = 2
