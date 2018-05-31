@@ -147,4 +147,5 @@ FROM_EMAIL = 'poisonous1205@gmail.com'
 PASSWD_MAIL = 'minhnguyen'
 SMTP_SERVER = 'smtp.gmail.com:587'
 
+TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
 # BACKGROUND_TASK_RUN_ASYNC = True

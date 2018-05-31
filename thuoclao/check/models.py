@@ -1,16 +1,11 @@
 import smtplib
+import requests
+import json 
 
+from urllib import request
 from django.db import models
 from django.contrib.auth.models import User
 
-from_add = 'poisonous1205@gmail.com'
-to_addr_list = ['locvx1234@gmail.com']
-cc_add_list = []
-subject = 'test sent mail'
-message = 'minhkma dep trai tu nho'
-username = 'poisonous1205@gmail.com'
-password = 'minhnguyen'
-smtpserver='smtp.gmail.com:587'
 
 class Alert(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,7 +35,21 @@ class Alert(models.Model):
         server.sendmail(from_add, to_addr_list, mes)
         server.quit()
 
+    def send_telegram_message(self, token, text):
+        url = 'https://api.telegram.org/bot{0}/sendMessage'.format(token)
+        data = {'chat_id':self.telegram_id, 'text':text, 'parse_mode':'Markdown'}
+        requests.post(url=url, data=data).json()
 
+    def send_slack_message(self, text):
+        payload = {"text": "{0}".format(text)}
+        try:
+            json_data = json.dumps(payload)
+            req = request.Request(self.webhook,
+                                data=json_data.encode('ascii'),
+                                headers={'Content-Type': 'application/json'}) 
+            request.urlopen(req)
+        except Exception as em:
+            print("EXCEPTION: " + str(em))
 
 
 class Host(models.Model):
