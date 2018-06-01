@@ -303,8 +303,7 @@ demo(repeat=30)
 
 @background(schedule=5, )
 def notify_user(user_id):
-    print("USERID")
-    print(user_id)
+    # print(user_id)
     user = User.objects.get(id=user_id)
     alert = Alert.objects.get(user=user)
     hosts = Host.objects.filter(user=user)
@@ -315,7 +314,7 @@ def notify_user(user_id):
         alert_data = display.check_ping_notify(ping.ok, ping.warning, ping.critical)
         print(alert_data)
         if alert_data[0] != host.status_ping:  # status changed
-            host.status_ping=alert_data[0]
+            host.status_ping = alert_data[0]
             host.save()
             message = """
             *[{0}] Notify to check !!! {1}*

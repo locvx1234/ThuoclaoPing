@@ -1,10 +1,13 @@
+import json
+
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.template.loader import render_to_string
 from pprint import pprint
-import json
+
 from .models import Host, Service, Alert
 from .forms import AlertForm
 from lib.display_metric import Display
@@ -12,15 +15,13 @@ from lib.display_metric import Display
 
 def index(request):
     if request.user.is_authenticated:
-        context = {}
         user_id = User.objects.get(username=request.user.username).id
         hosts = Host.objects.filter(user_id=user_id)
         services = Service.objects.filter(host__in=hosts).distinct()
         # hosts = hosts.filter(service__in=services)
-        context['hosts'] = hosts
-        context['services'] = services
-        context['count_host'] = len(hosts)
-        context['count_service'] = len(services)
+        context = {'hosts': hosts, 'services': services, 'count_host': len(hosts), \
+                'count_service': len(services)}
+        
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
@@ -35,8 +36,20 @@ def get_data(request, pk_host, service_name):
     # pprint(res)
     print(pk_host)
     print(service_name)
-    # return HttpResponse('Hello World!')
     return HttpResponse(json_data, content_type="application/json")
+
+
+def total_parameter(request):
+    if request.is_ajax():
+        user_id = User.objects.get(username=request.user.username).id
+        hosts = Host.objects.filter(user_id=user_id)
+        total_ok = hosts.filter(status_ping=0).count() + hosts.filter(status_http=0).count()
+        total_warning = hosts.filter(status_ping=1).count() + hosts.filter(status_http=1).count()
+        total_critical = hosts.filter(status_ping=2).count() + hosts.filter(status_http=2).count()
+        context = {'total_ok': total_ok, 'total_warning': total_warning, 'total_critical': total_critical}
+        json_data = json.dumps(context)
+        print(json_data)
+        return HttpResponse(json_data, content_type="application/json")
 
 
 def view_html(request):

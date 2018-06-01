@@ -56,8 +56,8 @@ class Host(models.Model):
     hostname = models.CharField(max_length=45)
     ip_address = models.GenericIPAddressField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status_ping = models.IntegerField(default=0)
-    status_http = models.IntegerField(default=0)
+    status_ping = models.IntegerField(default=-1)
+    status_http = models.IntegerField(default=-1)
     
     def __str__(self):
         return str(self.hostname) + " (" + str(self.ip_address) + ")" + " - " + str(self.user)
