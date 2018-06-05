@@ -1,58 +1,63 @@
 {% extends "base_site.html" %}
 
-{% block title %} Dashboard 1 {% endblock title %}
-
+{% block title %} Dashboard {% endblock title %}
+{% load static %}
 {% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{% static '/build/css/dashboard.css' %}">
   {{ block.super }}
 {% endblock stylesheets %}
 {% load static %}
+
 {% block content %}
   <div class="right_col" role="main">
     <!-- top tiles -->
     <div class="row tile_count">
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Total Hosts</span>
+        <span class="count_top"><i class="fa fa-server"></i> Total Hosts</span>
         <div class="count">{{ count_host }}</div>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-clock-o"></i> Total servicces</span>
+        <span class="count_top"><i class="fa fa-briefcase"></i> Total servicces</span>
         <div class="count">{{ count_service }}</div>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Total OK</span>
-          <div class="count green">2</div>
-        <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+        <span class="count_top"><i class="fa fa-thumbs-up"></i> Total OK</span>
+          <div class="count green" id="total_ok"></div>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Total Warning</span>
-        <div class="count blue">1</div>
-        <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> From last Week</span>
+        <span class="count_top"><i class="fa fa-warning"></i> Total Warning</span>
+        <div class="count blue" id="total_warning"></div>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Total Critical</span>
-        <div class="count red">0</div>
-        <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+        <span class="count_top"><i class="fa fa-exclamation-circle"></i> Total Critical</span>
+        <div class="count red" id="total_critical"></div>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Total Connections</span>
-        <div class="count">7</div>
-        <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+        <span class="count_top"><i class="fa fa-clock-o"></i> Time now</span>
+        <div id="MyClockDisplay" class="clock"></div>
       </div>
-    </div>
+  </div>
     <!-- /top tiles -->
+    <!-- service menu -->
+    <div id="my_service_menu">
+      <button class="btn active" onclick="filterSelection('all')">All</button>
+      <button class="btn" onclick="filterSelection('PING')">Ping</button>
+      <button class="btn" onclick="filterSelection('HTTP')">HTTP</button>
+    </div>
     <!-- graphs -->
     <div class="row">
         {% for service in services %}
             {% for item in service.host.all %}
-            <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="col-md-6 col-sm-6 col-xs-12 filterDiv {{ service.service_name }}">
               <div class="x_panel">
                 <div class="x_title">
                   <h2>{{ service.service_name }}<small>{{ item }}</small></h2>
                   <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    <li>
+                      <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
                     <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"></a>
                     </li>
                     <li><a class="close-link"><i class="fa fa-close"></i></a>
                     </li>
@@ -60,9 +65,7 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo id incidunt nemo totam. Distinctio excepturi exercitationem quae voluptas voluptatum?
-
+                  <div id="chartContainer.{{ item.pk }}.{{ service.service_name }}" class="graph" style="height: 300px; width: 100%;"></div>
                 </div>
               </div>
             </div>
@@ -70,121 +73,11 @@
         {% endfor %}
 
         <div class="clearfix"></div>
-
-        <div class="col-md-6 col-sm-6 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>Yasuo <small>8.8.8.8</small></h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Settings 1</a>
-                    </li>
-                    <li><a href="#">Settings 2</a>
-                    </li>
-                  </ul>
-                </li>
-                <li><a class="close-link"><i class="fa fa-close"></i></a>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
-
-            </div>
-          </div>
+        {% if graph %}
+        <div style="width:600;height:500">
+        {{ graph|safe }}
         </div>
-
-        <div class="col-md-6 col-sm-6 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>Toronto <small>172.16.10.1</small></h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Settings 1</a>
-                    </li>
-                    <li><a href="#">Settings 2</a>
-                    </li>
-                  </ul>
-                </li>
-                <li><a class="close-link"><i class="fa fa-close"></i></a>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
-
-            </div>
-          </div>
-        </div>
+        {% endif %}
       </div>
 
 
@@ -193,26 +86,7 @@
 
 {% block javascripts %}
   {{ block.super}}
-  <!-- Chart.js -->
-  <script src="{% static '/vendors/Chart.js/dist/Chart.min.js' %}"></script>
-  <!-- gauge.js -->
-  <script src="{% static '/vendors/gauge.js/dist/gauge.min.js' %}"></script>
-  <!-- Skycons -->
-  <script src="{% static '/vendors/skycons/skycons.js' %}"></script>
-  <!-- Flot -->
-  <script src="{% static '/vendors/Flot/jquery.flot.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.pie.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.time.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.stack.js' %}"></script>
-  <script src="{% static '/vendors/Flot/jquery.flot.resize.js' %}"></script>
-  <!-- Flot plugins -->
-  <script src="{% static '/vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>
-  <script src="{% static '/vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>
-  <script src="{% static '/vendors/flot.curvedlines/curvedLines.js' %}"></script>
-  <!-- DateJS -->
-  <script src="{% static '/vendors/DateJS/build/date.js' %}"></script>
-  <!-- JQVMap -->
-  <script src="{% static '/vendors/jqvmap/dist/jquery.vmap.js' %}"></script>
-  <script src="{% static '/vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
-  <script src="{% static '/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>
+
+  <script src="{% static '/build/js/dashboard.js' %}"></script>
+  <script src="{% static '/vendors/canvasjs-non-commercial-2.0/canvasjs.min.js' %}"></script>
 {% endblock javascripts %}

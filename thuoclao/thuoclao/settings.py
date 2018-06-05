@@ -11,11 +11,15 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+#
+# PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+#
+# sys.path.append(os.path.join(PROJECT_PATH, 'lib/'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -37,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'check',
-    'accounts'
+    'accounts',
+    'lib',
+    'background_task'
 ]
 
 MIDDLEWARE = [
@@ -76,8 +82,15 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+	    # 'read_default_file': '/etc/mysql/my.cnf',
+        },
+	'NAME': 'thuoclao_locvu2',
+	'USER': 'thuoclao',
+	'PASSWORD': 'thuoclao',
+	'HOST': '192.168.30.61',
+	'PORT': '3306'
     }
 }
 
@@ -122,6 +135,17 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     ('check', os.path.join(BASE_DIR, 'check', 'static')),
+    ('accounts', os.path.join(BASE_DIR, 'accounts', 'static')),
 ]
 
 LOGIN_REDIRECT_URL = 'index'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
+
+FROM_EMAIL = 'poisonous1205@gmail.com'
+PASSWD_MAIL = 'minhnguyen'
+SMTP_SERVER = 'smtp.gmail.com:587'
+
+TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
+# BACKGROUND_TASK_RUN_ASYNC = True
