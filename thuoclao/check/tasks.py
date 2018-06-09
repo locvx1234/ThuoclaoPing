@@ -236,11 +236,11 @@ def cmd_fping(hosts):
 
 def write_influxdb(data, user, host_db= None, port= None, username= None,
                    password= None, database= None):
-    host_db = host_db or '192.168.30.67'
-    port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
-    database = database or 'thuoclao'
+    host_db = host_db or settings.INFLUXDB_HOST
+    port = port or settings.INFLUXDB_PORT
+    username = username or settings.INFLUXDB_USER
+    password = password or settings.INFLUXDB_USER_PASSWORD
+    database = database or settings.INFLUXDB_DB
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
     json_body = [
@@ -272,14 +272,16 @@ async def run_command(*args, user):
         # print('line ne: {}'.format(line))
         data = fping_regex.match(line)
         if data:
+            print("PRE WRITE DB")
             write_influxdb(data=data, user=user)
+            print("AFTER WRITE DB")
     return stderr.decode().strip()
 
 
 @background(schedule=5)
 def demo():
-    SQL = GetDataFping(username='thuoclao', password='thuoclao',
-                       ip='192.168.30.61', db='thuoclao_locvu2')
+    SQL = GetDataFping(username=settings.DATABASES['default']['USER'], password=settings.DATABASES['default']['PASSWORD'],
+                       ip=settings.DATABASES['default']['HOST'], db=settings.DATABASES['default']['NAME'])
     data_sql = SQL.get_data_from_mysql()
     SQL.s.close()
     # print(data_sql)
@@ -341,5 +343,8 @@ all_user = User.objects.all()
 
 for user in all_user:
     print(user)
-    alert = Alert.objects.get(user=user)
+    try:
+        alert = Alert.objects.get(user=user)
+    except Alert.DoesNotExist:
+        break
     notify_user(user.id, repeat=alert.delay_check)

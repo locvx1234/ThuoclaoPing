@@ -29,7 +29,7 @@ SECRET_KEY = '_ttj5t!3fo03!k(w!o85ml0wk5$eb$%#!cg(^67x3h54&!vqw2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*',]
 
 # Application definition
 
@@ -86,11 +86,10 @@ DATABASES = {
         'OPTIONS': {
 	    # 'read_default_file': '/etc/mysql/my.cnf',
         },
-	'NAME': 'thuoclao_locvu2',
-	'USER': 'thuoclao',
-	'PASSWORD': 'thuoclao',
-	'HOST': '192.168.30.61',
-	'PORT': '3306'
+	'NAME': 'thuoclao',
+	'USER': 'root',
+	'PASSWORD': '123456',
+	'HOST': 'db',
     }
 }
 
@@ -130,7 +129,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
@@ -148,4 +147,10 @@ PASSWD_MAIL = 'minhnguyen'
 SMTP_SERVER = 'smtp.gmail.com:587'
 
 TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
+
+INFLUXDB_DB = 'thuoclao'
+INFLUXDB_USER = 'admin'
+INFLUXDB_USER_PASSWORD = 'admin'
+INFLUXDB_HOST = 'influxdb'
+INFLUXDB_PORT = "8086"
 # BACKGROUND_TASK_RUN_ASYNC = True

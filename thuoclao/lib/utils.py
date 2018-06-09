@@ -2,7 +2,7 @@ import configparser
 from influxdb import InfluxDBClient
 from django.contrib.auth.models import User
 from check.models import Host, Service
-
+from thuoclao import settings
 
 class GetConfig(object):
 
@@ -19,13 +19,13 @@ class Auth(GetConfig):
     #     return config
     def auth(self, host_db=None, port=None, username=None, password=None, database=None):
 
-        conf = GetConfig()
-        config = conf.get_config("lib/test.conf")
-        host_db = host_db or config['INFLUX']['IP_influx']
-        port = port or config['INFLUX']['port']
-        username = username or config['INFLUX']['user']
-        password = password or config['INFLUX']['password']
-        database = database or config['INFLUX']['database']
+        #conf = GetConfig()
+        #config = conf.get_config("lib/test.conf")
+        host_db = host_db or settings.INFLUXDB_HOST
+        port = port or settings.INFLUXDB_PORT
+        username = username or settings.INFLUXDB_USER
+        password = password or settings.INFLUXDB_USER_PASSWORD
+        database = database or settings.INFLUXDB_DB
         client = InfluxDBClient(host=host_db, port= port, username=username,
                                 password=password, database=database)
         return client

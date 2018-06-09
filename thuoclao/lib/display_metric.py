@@ -30,6 +30,7 @@ class Display(utils.Auth):
                                         'and \"user\" = \'{}\''
                                         .format(self.host, self.user))
         results_status = list(data_status.get_points(measurement='ping'))
+        print(results_status)
         val_status = round(results_status[0]['mean'], 2)
         time = results_status[0]['time']
         if val_status < oke:

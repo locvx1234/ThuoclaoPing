@@ -36,6 +36,7 @@ def get_data(request, pk_host, service_name):
     # pprint(res)
     print(pk_host)
     print(service_name)
+    print("#$#$#$#$#$#$#$#$#$#$#$#$#$")
     return HttpResponse(json_data, content_type="application/json")
 
 
@@ -83,7 +84,7 @@ def host(request):
                 for service in services.filter(service_name=item.upper()):
                     service.host.add(host_data.id)
             else:  # service does not exist
-                service_data = Service(service_name=item.upper(), ok=0, warning=0, critical=0, interval_check=0)
+                service_data = Service(service_name=item.upper(), ok=10, warning=40, critical=70, interval_check=20)
                 service_data.save()
                 service_data.host.add(host_data)
         return HttpResponseRedirect(reverse('host'))
