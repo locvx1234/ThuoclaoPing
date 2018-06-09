@@ -63,7 +63,7 @@ $ cd ThuoclaoPing
 $ ./rebuild_docker.sh
 ```
 
-Then, access http://<ip-docker-host>
+Then, access `http://ip-docker-host`
 
 User : admin
 Password : strongpass@@
