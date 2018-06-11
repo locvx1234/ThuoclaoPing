@@ -37,3 +37,11 @@ services:
       - INFLUXDB_DB=thuoclao
       - INFLUXDB_USER=thuoclao
       - INFLUXDB_USER_PASSWORD=thuoclao
+  grafana:
+    image: grafana/grafana:4.1.0
+    volumes:
+      - .:/code
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
