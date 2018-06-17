@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from pprint import pprint
 
-from .models import Host, Service, Alert
+from .models import Host, Service, Alert, Group, Host_attribute, Group_attribute
 from .forms import AlertForm
 from lib.display_metric import Display
 
@@ -16,37 +16,38 @@ from lib.display_metric import Display
 def index(request):
     if request.user.is_authenticated:
         user_id = User.objects.get(username=request.user.username).id
-        hosts = Host.objects.filter(user_id=user_id)
-        services = Service.objects.filter(host__in=hosts).distinct()
-        # hosts = hosts.filter(service__in=services)
+        groups = Group.objects.filter(user_id=user_id)
+        hosts = Host.objects.filter(group__in=groups)
+        services = Service.objects.all()
         context = {'hosts': hosts, 'services': services, 'count_host': len(hosts), \
-                'count_service': len(services)}
+                'count_service': len(services), 'groups': groups}
         
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
 
 
-def get_data(request, pk_host, service_name):
+def get_data(request, pk_host, service_name, query_time):
     host = Host.objects.get(id=pk_host)
-    service = host.service_set.get(service_name=service_name.lower())
-    display = Display(service_name.lower(), host.ip_address, host.user.username)
-    res = display.select(service.interval_check)
+    if service_name == 'ping':
+        ip_addr = host.host_attribute_set.get(attribute_name='ip_address')
+        display = Display(service_name, ip_addr, host.group.user.username)
+        res = display.select(query_time)
+    
     json_data = json.dumps(res)
     # pprint(res)
     print(pk_host)
-    print(service_name)
-    print("#$#$#$#$#$#$#$#$#$#$#$#$#$")
     return HttpResponse(json_data, content_type="application/json")
 
 
 def total_parameter(request):
     if request.is_ajax():
         user_id = User.objects.get(username=request.user.username).id
-        hosts = Host.objects.filter(user_id=user_id)
-        total_ok = hosts.filter(status_ping=0).count() + hosts.filter(status_http=0).count()
-        total_warning = hosts.filter(status_ping=1).count() + hosts.filter(status_http=1).count()
-        total_critical = hosts.filter(status_ping=2).count() + hosts.filter(status_http=2).count()
+        groups = Group.objects.filter(user_id=user_id)
+        hosts = Host.objects.filter(group__in=groups)
+        total_ok = hosts.filter(status=0).count()
+        total_warning = hosts.filter(status=1).count()
+        total_critical = hosts.filter(status=2).count()
         context = {'total_ok': total_ok, 'total_warning': total_warning, 'total_critical': total_critical}
         json_data = json.dumps(context)
         print(json_data)
@@ -61,99 +62,149 @@ def view_html(request):
     return HttpResponse(template.render(context, request))
 
 
-def host(request):
+def host(request, service_name):
     context = {}
+    service = Service.objects.get(service_name=service_name)
     user = User.objects.get(username=request.user.username)
-    hosts = Host.objects.filter(user_id=user.id)
-    services = Service.objects.filter(host__in=hosts).distinct()
+    all_groups = Group.objects.filter(user_id=user.id, service=service)
+    all_hosts = Host.objects.filter(group__in=all_groups)
+    
+    hosts = []
+    for host in all_hosts:
+        item = {'id': host.id, 'hostname': host.hostname, 'status': host.status, \
+                'description': host.description, 'group_name': host.group.group_name}
+        if service_name == 'ping':
+            ip_addr = host.host_attribute_set.get(attribute_name='ip_address')
+            item['ip_address'] = ip_addr.value
+        if service_name == 'http':  
+            url = host.host_attribute_set.get(attribute_name='url')
+            item['url'] = url.value
+        hosts.append(item)
 
-    list_service = [service.service_name for service in services]   # ex ['HTTP', 'PING']
-    context['list_service'] = list_service
-    context['hosts'] = hosts
-    context['services'] = services
+    groups = []
+    for group in all_groups:
+        item = {'id': group.id, 'group_name': group.group_name, 'hosts': group.host_set.all(), \
+                'description': group.description, 'ok': group.ok, 'warning': group.warning, \
+                'critical': group.critical}
+        if service_name == 'ping':
+            number_packet = group.group_attribute_set.get(attribute_name='number_packet')
+            item['number_packet'] = number_packet.value
+            interval_ping = group.group_attribute_set.get(attribute_name='interval_ping')
+            item['interval_ping'] = interval_ping.value
+        if service_name == 'http':
+            interval_check = group.group_attribute_set.get(attribute_name='interval_check')
+            item['interval_check'] = interval_check.value
+        groups.append(item)
+
     if request.method == 'POST':
-        hostname = request.POST.get('hostname')
-        ip_address = request.POST.get('ip-host')
-        host_data = Host(hostname=hostname, ip_address=ip_address, user=user)
-        host_data.save()
+        if request.POST.get('hostname'):  # add host  
+            hostname = request.POST.get('hostname')
+            description = request.POST.get('host_description')
+            group_id = request.POST.get('group')
+            group = Group.objects.get(id=group_id)
+            host_data = Host(hostname=hostname, description=description, group=group)
+            host_data.save()
+            if service_name == 'ping':
+                ip_address = request.POST.get('ip-host')
+                host_attr_data = Host_attribute(host=host_data, attribute_name="ip_address", \
+                                                value=ip_address, type_value=4)
+            if service_name == 'http':
+                url = request.POST.get('url')
+                host_attr_data = Host_attribute(host=host_data, attribute_name="url", \
+                                                value=url, type_value=5)
+            host_attr_data.save()
 
-        check = request.POST.getlist('checks[]')  # checklist: HTTP, Ping
+        if request.POST.get('group_name'):  # add group 
+            group_name = request.POST.get('group_name')
+            description = request.POST.get('group_description')
+            ok = request.POST.get('ok')
+            warning = request.POST.get('warning')
+            critical = request.POST.get('critical')
+            
+            group_data = Group(user=user ,service=service, group_name=group_name, description=description, \
+                            ok=ok, warning=warning, critical=critical)
+            group_data.save()
 
-        for item in check:
-            if item.upper() in list_service:  # service existed
-                for service in services.filter(service_name=item.upper()):
-                    service.host.add(host_data.id)
-            else:  # service does not exist
-                service_data = Service(service_name=item.upper(), ok=10, warning=40, critical=70, interval_check=20)
-                service_data.save()
-                service_data.host.add(host_data)
-        return HttpResponseRedirect(reverse('host'))
-    return render(request, 'check/host.html', context)
+            if service_name == 'ping':
+                interval_ping = request.POST.get('interval_ping')
+                number_packet = request.POST.get('number_packet')
+
+                attr_interval_ping = Group_attribute(group=group_data, attribute_name='interval_ping', \
+                                                value=interval_ping, type_value=0)
+                attr_interval_ping.save()
+
+                attr_num_packet = Group_attribute(group=group_data, attribute_name='number_packet', \
+                                            value=number_packet, type_value=0)
+                attr_num_packet.save()
+            if service_name == 'http':
+                interval_check = request.POST.get('interval_check')
+                attr_interval_check = Group_attribute(group=group_data, attribute_name='interval_check', \
+                                                value=interval_check, type_value=0)
+                attr_interval_check.save()
+
+        return HttpResponseRedirect(reverse('host', kwargs={'service_name':service_name}))
+
+    context = {'hosts': hosts, 'groups': groups}
+    return render(request, 'check/'+ str(service_name) +'.html', context)
 
 
-def delete_host(request, host_id):
-    host_data_query = Host.objects.filter(id=host_id)
-    host_data_query.delete()
-    return HttpResponseRedirect(reverse('host'))
+def delete_host(request, service_name, host_id):
+    host_query = Host.objects.filter(id=host_id)
+    host_query.delete()
+    return HttpResponseRedirect(reverse('host', kwargs={'service_name':service_name}))
 
 
-def edit_host(request, host_id):
-    host_data_query = Host.objects.filter(id=host_id)
-    user = User.objects.get(username=request.user.username)
-    hosts = Host.objects.filter(user_id=user.id)
-    services = Service.objects.filter(host__in=hosts).distinct()    # cac service hien co cua user do
-    services_name = [service.service_name for service in services]
+def delete_group(request, service_name, group_id):
+    group_query = Group.objects.filter(id=group_id)
+    group_query.delete()
+    return HttpResponseRedirect(reverse('host', kwargs={'service_name':service_name}))
+
+
+def edit_host(request, service_name, host_id):
+    host_query = Host.objects.get(id=host_id)
 
     if request.method == 'POST':
         # update host
-        hostname = request.POST.get('hostname')
-        ip_address = request.POST.get('ip-host')
-        host_data_query.update(hostname=hostname, ip_address=ip_address, user=user)
-
-        # update service
-        host_data = Host.objects.get(id=host_id)
-        checked = [element for element in request.POST.getlist('checks[]')]  # service_name
-        for item in checked:
-            if item in services_name:  # update
-
-                service = services.get(service_name=item)
-
-                service.host.add(host_data)
-            # else:  # add new
-            #     service_data = Service(service_name=item[0], ok=0, warning=0, critical=0, interval_check=0)
-            #     service_data.save()
-            #     service_data.host.add(host_data.id)
-        uncheck_list = list(set(services_name) - set([item for item in checked]))
-        for item_uncheck in uncheck_list:
-            service = services.get(service_name=item_uncheck)
-            service.host.remove(host_data)
-    return HttpResponseRedirect(reverse('host'))
+        host_query.hostname = request.POST.get('hostname')
+        host_query.description = request.POST.get('host_description')
+        if service_name == 'ping':
+            ip_address = request.POST.get('ip-host')
+            host_attr_data = Host_attribute.objects.get(host=host_query, attribute_name="ip_address")
+            host_attr_data.value = ip_address
+        if service_name == 'http':
+            url = request.POST.get('url')
+            host_attr_data = Host_attribute.objects.get(host=host_query, attribute_name="url")
+            host_attr_data.value = url
+        host_query.save()
+        host_attr_data.save()
+        
+    return HttpResponseRedirect(reverse('host', kwargs={'service_name':service_name}))
 
 
-def service(request):
-    context = {}
-    user_id = User.objects.get(username=request.user.username).id
-    hosts = Host.objects.filter(user_id=user_id)
-    services = Service.objects.filter(host__in=hosts).distinct()
-    context['services'] = services
-    return render(request, 'check/service.html', context)
-
-
-def config_service(request, service_id):
-    service_data = Service.objects.filter(id=service_id)
+def edit_group(request, service_name, group_id):
+    group_query = Group.objects.get(id=group_id)
+    
     if request.method == 'POST':
-        ok = request.POST.get('ok')
-        warning = request.POST.get('warning')
-        critical = request.POST.get('critical')
-        interval_check = request.POST.get('interval_check')
-        service_data.update(ok=ok, warning=warning, critical=critical, interval_check=interval_check)
-    return HttpResponseRedirect(reverse('service'))
+        # update group
+        group_query.group_name = request.POST.get('group_name')
+        group_query.description = request.POST.get('group_description')
+        group_query.ok = request.POST.get('ok')
+        group_query.warning = request.POST.get('warning')
+        group_query.critical = request.POST.get('critical')
+        group_query.save()
 
-
-def remove_service(request, service_id):
-    service_data = Service.objects.filter(id=service_id)
-    service_data.delete()
-    return HttpResponseRedirect(reverse('service'))
+        if service_name == 'ping':
+            attr_interval_ping = Group_attribute.objects.get(group=group_query, attribute_name="interval_ping")
+            attr_interval_ping.value = request.POST.get('interval_ping')
+            attr_interval_ping.save()
+            attr_number_packet = Group_attribute.objects.get(group=group_query, attribute_name="number_packet")
+            attr_number_packet.value = request.POST.get('number_packet')
+            attr_number_packet.save()
+        if service_name == 'http':
+            attr_interval_check = Group_attribute.objects.get(group=group_query, attribute_name="interval_check")
+            attr_interval_check.value = request.POST.get('interval_check')
+            attr_interval_check.save()
+    return HttpResponseRedirect(reverse('host', kwargs={'service_name':service_name}))
 
 
 def alert(request):
@@ -161,23 +212,19 @@ def alert(request):
         alert_data = Alert.objects.get(user=request.user)
     except Alert.DoesNotExist:
         alert_data = None
-
+    
     if request.method == 'POST':
-        print(request.user)
-        print(request.POST)
         alert_form = AlertForm(request.POST, instance=alert_data)
         if alert_form.is_valid():
             email_alert = alert_form.data["email_alert"]
             telegram_id = alert_form.data["telegram_id"]
             webhook = alert_form.data["webhook"]
-            delay_check = alert_form.data["delay_check"]
 
             if alert_data:
                 alert_form.save()
             else:
-                alert = Alert(user=request.user, email_alert=email_alert, telegram_id=telegram_id, webhook=webhook, delay_check=delay_check)
+                alert = Alert(user=request.user, email_alert=email_alert, telegram_id=telegram_id, webhook=webhook)
                 alert.save()
         return HttpResponseRedirect(reverse('alert'))
     context = {'alert': alert_data}
     return render(request, 'check/alert.html', context)
-

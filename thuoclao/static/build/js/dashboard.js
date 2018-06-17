@@ -4,10 +4,11 @@ $(window).load(function(){
         var id_chart = $(this).attr("id");
         var pk_host = id_chart.split('.')[1];
         var service_name = id_chart.split('.')[2];
-
+        var query_time = 20;
+        
         (function update() {
             $.ajax({
-                url: '/ajax/get_data/' + pk_host + '/' + service_name,
+                url: '/ajax/get_data/' + pk_host + '/' + service_name + '/' + query_time,
                 dataType: 'json',
                 success: function (data) {
                     var dps_max = [];

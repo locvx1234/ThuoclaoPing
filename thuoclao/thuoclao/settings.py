@@ -86,10 +86,15 @@ DATABASES = {
         'OPTIONS': {
 	    # 'read_default_file': '/etc/mysql/my.cnf',
         },
-	'NAME': 'thuoclao',
-	'USER': 'root',
-	'PASSWORD': '123456',
-	'HOST': 'db',
+	#'NAME': 'thuoclao',
+	#'USER': 'root',
+	#'PASSWORD': '123456',
+	#'HOST': 'db',
+        'NAME': 'thuoclao_locvu4',
+        'USER': 'thuoclao',
+        'PASSWORD': 'thuoclao',
+        'HOST': '192.168.30.61',
+        'PORT': '3306'
     }
 }
 
