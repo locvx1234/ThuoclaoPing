@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
 import os
-import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +28,7 @@ SECRET_KEY = '_ttj5t!3fo03!k(w!o85ml0wk5$eb$%#!cg(^67x3h54&!vqw2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -83,13 +82,10 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-	    # 'read_default_file': '/etc/mysql/my.cnf',
-        },
-	#'NAME': 'thuoclao',
-	#'USER': 'root',
-	#'PASSWORD': '123456',
-	#'HOST': 'db',
+        # 'NAME': 'thuoclao',
+        # 'USER': 'root',
+        # 'PASSWORD': '123456',
+        # 'HOST': 'db',
         'NAME': 'thuoclao_locvu4',
         'USER': 'thuoclao',
         'PASSWORD': 'thuoclao',

@@ -1,10 +1,6 @@
-import functools
 import asyncio
-import logging
 import signal
-import yaml
 import re
-import time
 import aiohttp
 
 from background_task import background
@@ -217,7 +213,7 @@ class GetDataFping():
             service_info['PING'] = ips
             dict_users[user.username] = service_info
         self.s.close()
-        return  dict_users
+        return dict_users
 
 
 fping_regex = re.compile(
@@ -230,12 +226,11 @@ def cmd_fping(hosts):
     cmd = ['fping', '-c', '{}'.format(number_packet)]
     cmd.extend(hosts)
     cmd = ' '.join(cmd)
-    # print(cmd)
     return cmd
 
 
-def write_influxdb(data, user, host_db= None, port= None, username= None,
-                   password= None, database= None):
+def write_influxdb(data, user, host_db=None, port=None, username=None,
+                   password=None, database=None):
     host_db = host_db or settings.INFLUXDB_HOST
     port = port or settings.INFLUXDB_PORT
     username = username or settings.INFLUXDB_USER
@@ -251,7 +246,7 @@ def write_influxdb(data, user, host_db= None, port= None, username= None,
                 "host": str(data.group("host"))
             },
             "fields": {
-               "sent": int(data.group("sent")) if data.group("sent") else 0,
+                "sent": int(data.group("sent")) if data.group("sent") else 0,
                 "recv": int(data.group("recv")) if data.group("recv") else 0,
                 "loss": int(data.group("loss")) if data.group("loss") else 0,
                 "min": float(data.group("min")) if data.group("min") else 0.0,
@@ -321,17 +316,19 @@ def notify_user(user_id):
             message = """
             *[{0}] Notify to check !!! {1}*
             ```
-            Host : {1} 
+            Host : {1}
             Adress : {2}
             Loss : {3}%
             Status : {0}
             ```
             """.format(alert_data[3], host.hostname, host.ip_address, alert_data[1])
             if alert.email_alert:
-                alert.send_email(settings.FROM_EMAIL, [], 
-                            "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
-                            "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, host.ip_address, alert_data[1], alert_data[3]), 
-                            settings.PASSWD_MAIL, settings.SMTP_SERVER)
+                alert.send_email(settings.FROM_EMAIL, [],
+                                 "[{}] Notify to check {}".format(alert_data[3], host.hostname),
+                                 "Hostname {} \nAddress {} \nLoss {}% - {}"
+                                 .format(host.hostname, host.ip_address,
+                                         alert_data[1], alert_data[3]),
+                                 settings.PASSWD_MAIL, settings.SMTP_SERVER)
 
             if alert.telegram_id:
                 alert.send_telegram_message(settings.TOKEN, message)
@@ -339,7 +336,9 @@ def notify_user(user_id):
             if alert.webhook:
                 alert.send_slack_message(message)
 
+
 all_user = User.objects.all()
+
 
 for user in all_user:
     print(user)

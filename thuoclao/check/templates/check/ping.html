@@ -107,7 +107,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                          <label  class="control-label col-md-3 col-sm-3 col-xs-12">IP Address</label>
+                                                          <label  class="control-label col-md-3 col-sm-3 col-xs-12">IP / Domain</label>
                                                           <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <input type="text" name="ip-host" value={{ host.ip_address }} required="required" class="form-control col-md-7 col-xs-12">
                                                           </div>
@@ -148,8 +148,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 
     <div class="clearfix"></div><br>
@@ -241,32 +239,37 @@
                                                         <br>
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">OK</label>
-                                                            <div class="col-md-3 col-sm-3 col-xs-6">
-                                                            <input type="number" name="ok" value={{ group.ok }} required="required" class="form-control col-md-7 col-xs-12">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input type="number" name="ok" value={{ group.ok }} required="required" class="form-control col-md-7 col-xs-12">
+                                                                <small id="okHelp" class="form-text text-muted">The maximum rate to state is ok</small>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Warning</label>
-                                                            <div class="col-md-3 col-sm-3 col-xs-6">
-                                                            <input type="number" name="warning" value={{ group.warning }} required="required" class="form-control col-md-7 col-xs-12">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input type="number" name="warning" value={{ group.warning }} required="required" class="form-control col-md-7 col-xs-12">
+                                                                <small id="warnHelp" class="form-text text-muted">The maximum rate to state is warning </small>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Critical</label>
-                                                            <div class="col-md-3 col-sm-3 col-xs-6">
-                                                            <input type="number" name="critical" value={{ group.critical }} required="required" class="form-control col-md-7 col-xs-12">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input type="number" name="critical" value={{ group.critical }} required="required" class="form-control col-md-7 col-xs-12">
+                                                                <small id="critHelp" class="form-text text-muted">The maximum rate to state is critical</small>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Interval Ping</label>
-                                                            <div class="col-md-3 col-sm-3 col-xs-6">
-                                                            <input type="number" name="interval_ping" value={{ group.interval_ping }} required="required" class="form-control col-md-7 col-xs-12">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input type="number" name="interval_ping" value={{ group.interval_ping }} required="required" class="form-control col-md-7 col-xs-12">
+                                                                <small id="itimeHelp" class="form-text text-muted">The time to execute ping again with hosts</small>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Number Packet</label>
-                                                            <div class="col-md-3 col-sm-3 col-xs-6">
-                                                            <input type="number" name="number_packet" value={{ group.number_packet }} required="required" class="form-control col-md-7 col-xs-12">
+                                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                <input type="number" name="number_packet" value={{ group.number_packet }} required="required" class="form-control col-md-7 col-xs-12">
+                                                                <small id="numHelp" class="form-text text-muted">Packet number in a ping</small>
                                                             </div>
                                                         </div>
 
@@ -328,7 +331,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label  class="control-label col-md-3 col-sm-3 col-xs-12">IP Address <span class="required">*</span></label>
+                    <label  class="control-label col-md-3 col-sm-3 col-xs-12">IP / Domain<span class="required">*</span></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <input type="text" name="ip-host" required="required" class="form-control col-md-7 col-xs-12">
                     </div>
@@ -388,32 +391,37 @@
                 <br>
                 <div class="form-group">
                     <label  class="control-label col-md-3 col-sm-3 col-xs-12">OK</label>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                    <input type="number" name="ok" value=10 required="required" class="form-control col-md-7 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" name="ok" value=10 required="required" class="form-control col-md-7 col-xs-12">
+                        <small class="form-text text-muted">The maximum rate to state is ok</small>
                     </div>
                 </div>
                 <div class="form-group">
                     <label  class="control-label col-md-3 col-sm-3 col-xs-12">Warning</label>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                    <input type="number" name="warning" value=40 required="required" class="form-control col-md-7 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" name="warning" value=40 required="required" class="form-control col-md-7 col-xs-12">
+                        <small class="form-text text-muted">The maximum rate to state is warning</small>
                     </div>
                 </div>
                 <div class="form-group">
                     <label  class="control-label col-md-3 col-sm-3 col-xs-12">Critical</label>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                    <input type="number" name="critical" value=100 required="required" class="form-control col-md-7 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" name="critical" value=100 required="required" class="form-control col-md-7 col-xs-12">
+                        <small class="form-text text-muted">The maximum rate to state is critical</small>
                     </div>
                 </div>
                 <div class="form-group">
                     <label  class="control-label col-md-3 col-sm-3 col-xs-12">Interval Ping</label>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                    <input type="number" name="interval_ping" value=20 required="required" class="form-control col-md-7 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" name="interval_ping" value=20 required="required" class="form-control col-md-7 col-xs-12">
+                        <small class="form-text text-muted">The time to execute ping again with hosts</small>
                     </div>
                 </div>
                 <div class="form-group">
                     <label  class="control-label col-md-3 col-sm-3 col-xs-12">Number Packet</label>
-                    <div class="col-md-3 col-sm-3 col-xs-6">
-                    <input type="number" name="number_packet" value=20 required="required" class="form-control col-md-7 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" name="number_packet" value=20 required="required" class="form-control col-md-7 col-xs-12">
+                        <small class="form-text text-muted">Packet number in a ping</small>
                     </div>
                 </div>
                 <div class="ln_solid"></div>
@@ -437,7 +445,7 @@
 
 {% block javascripts %}
   {{ block.super}}
-  <!--<script src="{% static '/build/js/host.js' %}"></script>-->
+  <!-- <script src="{% static '/build/js/ping.js' %}"></script> -->
   <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
   <!--<script src="{% static '/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>-->
   <script src="{% static '/vendors/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
@@ -453,14 +461,4 @@
   <script src="{% static '/vendors/jszip/dist/jszip.min.js' %}"></script>
   <script src="{% static 'c/vendors/pdfmake/build/pdfmake.min.js' %}"></script>
   <script src="{% static '/vendors/pdfmake/build/vfs_fonts.js' %}"></script>
-  <!-- gauge.js -->
-  <!--<script src="{% static '/vendors/gauge.js/dist/gauge.min.js' %}"></script>-->
-  <!-- Skycons -->
-  <!--<script src="{% static '/vendors/skycons/skycons.js' %}"></script>-->
-  <!-- DateJS -->
-  <!--<script src="{% static '/vendors/DateJS/build/date.js' %}"></script>-->
-  <!-- JQVMap -->
-  <!--<script src="{% static '/vendors/jqvmap/dist/jquery.vmap.js' %}"></script>-->
-  <!--<script src="{% static '/vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>-->
-  <!--<script src="{% static '/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>-->
 {% endblock javascripts %}

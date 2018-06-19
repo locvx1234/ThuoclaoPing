@@ -1,7 +1,6 @@
 from django import forms
-from django.contrib.auth.models import User
-
 from check.models import Alert
+
 
 class AlertForm(forms.ModelForm):
     class Meta:
