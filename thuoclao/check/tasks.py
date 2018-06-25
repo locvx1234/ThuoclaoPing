@@ -111,13 +111,22 @@ async def factorial(interval, user, hostname, group, *args):
     await custom_sleep(interval, user, hostname, group, stdout, stderr)
 
 
-async def loop_exec(loop, tasks):
+async def loop_exec(loop, interval, user,
+                    hostname, group_name, number_packet, ip):
     while loop.is_running():
-        # tasks = [
-        #     asyncio.ensure_future(factorial(2, 'fping -c 4 dantri.vn')),
-        #     asyncio.ensure_future(factorial(3, 'fping -c 4 google.com')),
-        # ]
+        tasks = [
+            asyncio.ensure_future(factorial(interval,
+                                            user,
+                                            hostname,
+                                            group_name,
+                                            'fping -c {0} {1}'
+                                            .format(number_packet, ip)))
+        ]
         await asyncio.wait(tasks)
+    loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
+                                               hostname, group_name,
+                                               number_packet, ip))
+
 
 session = FuturesSession()
 
@@ -188,7 +197,7 @@ http()
 
 @background(schedule=0)
 def fping():
-    tasks = []
+    loop = asyncio.get_event_loop()
     data_ping = get_fping()
     print(data_ping)
     for user in data_ping:
@@ -198,15 +207,18 @@ def fping():
             group_name = info_ping['group_name']
             interval = int(info_ping['interval_ping'])
             number_packet = info_ping['number_packet']
-            tasks.append(asyncio.ensure_future(factorial(interval,
-                                                         user,
-                                                         hostname,
-                                                         group_name,
-                                                         'fping -c {0} {1}'
-                                                         .format(number_packet,
-                                                                 ip)
-                                                         )))
-    loop = asyncio.get_event_loop()
-    loop.create_task(loop_exec(loop, tasks))
+            print('fping -c {} {}'.format(number_packet, ip))
+            loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
+                                               hostname, group_name,
+                                               number_packet, ip))
+            # tasks.append(asyncio.ensure_future(factorial(interval,
+            #                                              user,
+            #                                              hostname,
+            #                                              group_name,
+            #                                              'fping -c {0} {1}'
+            #                                              .format(number_packet,
+            #                                                      ip)
+            #                                              )))
+    # loop.create_task(loop_exec(loop))
     loop.run_forever()
 fping()
