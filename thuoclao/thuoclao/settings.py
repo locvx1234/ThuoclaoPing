@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'check',
     'accounts',
     'lib',
-    'background_task'
+    'background_task',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,10 @@ INFLUXDB_USER_PASSWORD = 'admin'
 INFLUXDB_HOST = 'influxdb'
 INFLUXDB_PORT = "8086"
 # BACKGROUND_TASK_RUN_ASYNC = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}

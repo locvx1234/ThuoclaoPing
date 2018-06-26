@@ -6,9 +6,17 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+from rest_framework import viewsets
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+
 from .models import Host, Service, Alert, Group, Host_attribute, Group_attribute
 from .forms import AlertForm
 from lib.display_metric import Display
+from .serializers import GroupSerializer, GroupAttributeSerializer, HostSerializer, HostAttributeSerializer
 
 
 def index(request):
@@ -225,3 +233,65 @@ def alert(request):
         return HttpResponseRedirect(reverse('alert'))
     context = {'alert': alert_data}
     return render(request, 'check/alert.html', context)
+
+
+class GroupList(APIView):
+    def get(self, request, format=None):
+        groups = Group.objects.filter(user=request.user)
+        serializer = GroupSerializer(groups, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = GroupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GroupSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Group.objects.filter(user=user)
+        return queryset
+
+
+class GroupAttributeViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GroupAttributeSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        groups = Group.objects.filter(user=user)
+        queryset = Group_attribute.objects.filter(group__in=groups)
+        return queryset
+
+
+class HostViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        group = Group.objects.filter(user=user)
+        queryset = Host.objects.filter(group__in=group)
+        return queryset
+
+
+class HostAttributeViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HostAttributeSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        groups = Group.objects.filter(user=user)
+        hosts = Host.objects.filter(group__in=groups)
+        queryset = Host_attribute.objects.filter(host__in=hosts)
+        return queryset

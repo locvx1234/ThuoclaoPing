@@ -1,5 +1,13 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from check import views
+from rest_framework import routers
+
+
+router = routers.DefaultRouter()
+router.register(r'groups', views.GroupViewSet, base_name='groups')
+router.register(r'groupattributes', views.GroupAttributeViewSet, base_name='groupattributes')
+router.register(r'hosts', views.HostViewSet, base_name='hosts')
+router.register(r'hostattributes', views.HostAttributeViewSet, base_name='hostattributes')
 
 
 urlpatterns = [
@@ -17,4 +25,7 @@ urlpatterns = [
     url(r'^ajax/get_data/(?P<pk_host>\d+)/(?P<service_name>[-\w]+)/(?P<query_time>\d+)/$', views.get_data, name='get_data'),
     url(r'^ajax/total_parameter/$', views.total_parameter, name='total_parameter'),
     url(r'^alert$', views.alert, name='alert'),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # url(r'^api/groups/$', views., name='groups'),
 ]
