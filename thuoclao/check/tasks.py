@@ -73,7 +73,7 @@ def write_influxdb(data, user, hostname, group_name,
         {
             "measurement": "ping",
             "tags": {
-                "user": str(user),
+                "username": str(user),
                 "ip": str(data.group("host")),
                 "group": str(group_name),
                 "hostname": str(hostname)
@@ -176,7 +176,7 @@ async def http_exec(loop, url, interval, hostname, group_name, user):
                                                           user))
 
 
-@background(schedule=0)
+@background(schedule=0, queue="queue-http")
 def http():
     data_http = get_http()
     print(data_http)
@@ -195,7 +195,7 @@ def http():
     loop.run_forever()
 http()
 
-@background(schedule=0)
+@background(schedule=0, queue="queue-ping")
 def fping():
     loop = asyncio.get_event_loop()
     data_ping = get_fping()
@@ -222,3 +222,52 @@ def fping():
     # loop.create_task(loop_exec(loop))
     loop.run_forever()
 fping()
+
+
+@background(schedule=5, )
+def notify_user(user_id):
+    # print(user_id)
+    user = User.objects.get(id=user_id)
+    alert = Alert.objects.get(user=user)
+    groups = Group.objects.filter(user=user)
+    hosts = Host.objects.filter(group__in=groups)
+
+    for host in hosts:
+        display = Display(host.group.group_name, host.hostname, host.group.user.username)
+        alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
+        print(alert_data)
+        if alert_data[0] != host.status:  # status changed
+            host.status = alert_data[0]
+            host.save()
+            ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
+            message = """
+            *[{0}] Notify to check !!! {1}*
+            ```
+            Host : {1} 
+            Adress : {2}
+            Loss : {3}%
+            Status : {0}
+            ```
+            """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
+            if alert.email_alert:
+                alert.send_email(settings.FROM_EMAIL, [], 
+                            "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
+                            "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address, 
+                                                                              alert_data[1], alert_data[3]), 
+                            settings.PASSWD_MAIL, settings.SMTP_SERVER)
+
+            if alert.telegram_id:
+                alert.send_telegram_message(settings.TOKEN, message)
+
+            if alert.webhook:
+                alert.send_slack_message(message)
+
+all_user = User.objects.all()
+
+for user in all_user:
+    print(user)
+    try:
+        alert = Alert.objects.get(user=user)
+    except Alert.DoesNotExist:
+        break
+    notify_user(user.id, repeat=alert.delay_check)

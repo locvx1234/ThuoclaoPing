@@ -4,7 +4,7 @@ $(window).load(function(){
         var id_chart = $(this).attr("id");
         var pk_host = id_chart.split('.')[1];
         var service_name = id_chart.split('.')[2];
-
+        console.log("dmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
         (function update() {
             $.ajax({
                 url: '/ajax/get_data/' + pk_host + '/' + service_name,

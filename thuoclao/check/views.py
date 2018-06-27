@@ -1,5 +1,5 @@
 import json
-
+from pprint import pprint
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponse
@@ -35,13 +35,17 @@ def index(request):
 
 def get_data(request, pk_host, service_name, query_time):
     host = Host.objects.get(id=pk_host)
+    print(host)
+    display = Display(host.group.group_name, host.hostname, host.group.user.username)
     if service_name == 'ping':
-        ip_addr = host.host_attribute_set.get(attribute_name='ip_address')
-        display = Display(service_name, ip_addr, host.group.user.username)
-        res = display.select(query_time)
-
+        ip_addr = host.host_attribute_set.get(attribute_name='ip_address').value
+        res = display.select_ping(ip_addr, query_time)
+        # pprint(res)
+    if service_name == 'http':
+        url = host.host_attribute_set.get(attribute_name='url').value
+        res = display.select_http(url, query_time)
+        # pprint(res)
     json_data = json.dumps(res)
-    print(pk_host)
     return HttpResponse(json_data, content_type="application/json")
 
 
