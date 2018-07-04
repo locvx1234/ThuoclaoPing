@@ -7,6 +7,7 @@ from datetime import datetime
 from influxdb import InfluxDBClient
 from requests_futures.sessions import FuturesSession
 import time
+from lib.display_metric import Display
 
 
 def get_fping():
@@ -44,7 +45,7 @@ def get_http():
         hosts = []
         for host in all_hosts:
             item = {'id': host.id, 'hostname': host.hostname, 'status': host.status,
-                'description': host.description, 'group_name': host.group.group_name}
+                    'description': host.description, 'group_name': host.group.group_name}
             item['interval_check'] = host.group.group_attribute_set.get(attribute_name='interval_check').value
             url = host.host_attribute_set.get(attribute_name='url')
             item['url'] = url.value
@@ -149,12 +150,10 @@ def bg_cb(sess, resp, hostname, group_name, user,
                 'group': str(group_name),
                 'username': str(user)
             },
-            "fields":
-                {
-                    "code": int(resp.status_code),
-                    "response": float(resp.elapsed.total_seconds())
-                }
-
+            "fields": {
+                "code": int(resp.status_code),
+                "response": float(resp.elapsed.total_seconds())
+            }
         }
     ]
     client.write_points(json_body)
@@ -189,9 +188,8 @@ def http():
             group_name = info_url['group_name']
             interval = int(info_url['interval_check'])
             print(url, hostname, group_name, interval)
-            loop.call_soon(loop.create_task, http_exec(loop, url, int(interval),
-                                                      hostname, group_name,
-                                                       user))
+            loop.call_soon(loop.create_task, http_exec(loop, url, interval,
+                                                       hostname, group_name, user))
     loop.run_forever()
 http()
 
@@ -209,17 +207,7 @@ def fping():
             number_packet = info_ping['number_packet']
             print('fping -c {} {}'.format(number_packet, ip))
             loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
-                                               hostname, group_name,
-                                               number_packet, ip))
-            # tasks.append(asyncio.ensure_future(factorial(interval,
-            #                                              user,
-            #                                              hostname,
-            #                                              group_name,
-            #                                              'fping -c {0} {1}'
-            #                                              .format(number_packet,
-            #                                                      ip)
-            #                                              )))
-    # loop.create_task(loop_exec(loop))
+                           hostname, group_name, number_packet, ip))
     loop.run_forever()
 fping()
 

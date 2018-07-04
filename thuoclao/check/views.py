@@ -126,10 +126,12 @@ def host(request, service_name):
         if request.POST.get('group_name'):  # add group
             group_name = request.POST.get('group_name')
             description = request.POST.get('group_description')
-            ok = request.POST.get('ok')
-            warning = request.POST.get('warning')
-            critical = request.POST.get('critical')
-
+            if service_name == 'ping':
+                ok = request.POST.get('ok')
+                warning = request.POST.get('warning')
+                critical = request.POST.get('critical')
+            if service_name == 'http':
+                pass
             group_data = Group(user=user, service=service, group_name=group_name, description=description,
                                ok=ok, warning=warning, critical=critical)
             group_data.save()

@@ -72,6 +72,28 @@ class Display(utils.Auth):
         return status_id, val_status, time, status_text
 
 
+    def check_http_notify(self, oke, warning, critical):
+        data_status = self.client.query('select mean("loss") from http '
+                                        'where \"hostname\" = \'{}\' '
+                                        'and \"group\" = \'{}\' '
+                                        'and \"username\" = \'{}\' '
+                                        'and time > now() -5m '
+                                        .format(self.hostname, self.group, self.username))
+        results_status = list(data_status.get_points(measurement='http'))
+        print(results_status)
+        val_status = round(results_status[0]['mean'], 2)
+        time = results_status[0]['time']
+        if val_status < oke:
+            status_id = 0
+            status_text = "OK"
+        elif val_status < warning:
+            status_id = 1
+            status_text = "Warning"
+        else:
+            status_id = 2
+            status_text = "CRITICAL"
+        return status_id, val_status, time, status_text
+
 # display = Display('ping', '8.8.8.8', 'minhkma', '1m')
 # res = display.select()
 # pprint(res)
