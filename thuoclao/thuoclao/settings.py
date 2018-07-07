@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'lib',
     'background_task',
     'rest_framework',
+    'thuoclao',
 ]
 
 MIDDLEWARE = [

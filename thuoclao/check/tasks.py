@@ -8,7 +8,10 @@ from influxdb import InfluxDBClient
 from requests_futures.sessions import FuturesSession
 import time
 from lib.display_metric import Display
+from celery.decorators import task
+from celery.utils.log import get_task_logger
 
+logger = get_task_logger(__name__)
 
 def get_fping():
     users = User.objects.all()
@@ -174,9 +177,10 @@ async def http_exec(loop, url, interval, hostname, group_name, user):
                                                           hostname, group_name,
                                                           user))
 
-
-@background(schedule=0, queue="queue-http")
+@task(name="http")
+# @background(schedule=0, queue="queue-http")
 def http():
+    logger.info("http nha")
     data_http = get_http()
     print(data_http)
     loop = asyncio.get_event_loop()
@@ -193,8 +197,11 @@ def http():
     loop.run_forever()
 http()
 
-@background(schedule=0, queue="queue-ping")
+
+@task(name="ping")
+# @background(schedule=0, queue="queue-ping")
 def fping():
+    logger.info("ping nha")
     loop = asyncio.get_event_loop()
     data_ping = get_fping()
     print(data_ping)
