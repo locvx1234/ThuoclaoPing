@@ -78,9 +78,9 @@ class Display(utils.Auth):
         return status_id, val_status, time, status_text
 
 
-    def check_http_notify(self, oke, warning, critical):
+    def check_http_notify(self):
         status_codes = []
-        data_status = self.client.query('select * from http '
+        data_status = self.client.query('select code from http '
                                         'where \"hostname\" = \'{}\' '
                                         'and \"group\" = \'{}\' '
                                         'and \"username\" = \'{}\' '
@@ -88,15 +88,14 @@ class Display(utils.Auth):
                                         .format(self.hostname, self.group, self.username))
         results_status = list(data_status.get_points(measurement='http'))
         print(results_status)
-        # val_status = round(results_status[0]['mean'], 2)
         for res in results_status:
             status_codes.append(res["code"])
         mode_code = mode(status_codes)
         time = results_status[0]['time']
-        if mode_code < oke:
+        if mode_code < 300:
             status_id = 0
             status_text = "OK"
-        elif mode_code < warning:
+        elif mode_code < 400:
             status_id = 1
             status_text = "Warning"
         else:
