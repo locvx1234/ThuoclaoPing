@@ -11,6 +11,8 @@ from lib.display_metric import Display
 from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery import shared_task
+from celery.decorators import periodic_task
+from celery.task.schedules import crontab
 from thuoclao import settings
 
 
@@ -215,15 +217,6 @@ async def fping():
             loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
                            hostname, group_name, number_packet, ip))
     loop.run_forever()
-# fping().delay()
-
-@shared_task
-def run():
-    task1 = asyncio.ensure_future(fping())
-    task2 = asyncio.ensure_future(http())
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
-run()
 
 
 def notify_user(user_id):
@@ -238,6 +231,7 @@ def notify_user(user_id):
         if host.group.service.service_name == "ping":
             alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
             # print(alert_data)
+
             if alert_data[0] != host.status:  # status changed
                 host.status = alert_data[0]
                 host.save()
@@ -289,12 +283,36 @@ def sending(alert, hostname, email_message, tele_slack_message):
         alert.send_slack_message(tele_slack_message)
 
 
-all_user = User.objects.all()
+# @periodic_task(
+#     run_every=(crontab(minute='*/1')),
+#     name="notify_ping",
+#     ignore_result=True
+# )
+async def notify_ping():
+    all_user = User.objects.all()
+    loop = asyncio.get_event_loop()
+    for user in all_user:
+        try:
+            alert = Alert.objects.get(user=user)
+            interval = alert.delay_check
+            loop.call_soon(loop.create_task, send_notify_ping(loop, user, interval))
+        except Alert.DoesNotExist:
+            continue
+    loop.run_forever()
 
-for user in all_user:
-    print(user)
-    try:
-        alert = Alert.objects.get(user=user)
-    except Alert.DoesNotExist:
-        break
-    notify_user(user.id, repeat=alert.delay_check)
+
+async def send_notify_ping(loop, user, interval):
+    print(user.id)
+    print('minhdeptrai')
+    notify_user(user.id)
+    loop.call_later(interval, loop.create_task, send_notify_ping(loop, user, interval))
+
+@shared_task
+def run():
+    task1 = asyncio.ensure_future(fping())
+    task2 = asyncio.ensure_future(http())
+    task3 = asyncio.ensure_future(notify_ping())
+    loop = asyncio.get_event_loop()
+    loop.run_forever()
+run()
+

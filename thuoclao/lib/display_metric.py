@@ -65,7 +65,7 @@ class Display(utils.Auth):
         except IndexError:
             val_status = 0
             time = 0
-            
+            # time = results_status[0]['time']
         if val_status < oke:
             status_id = 0
             status_text = "OK"
