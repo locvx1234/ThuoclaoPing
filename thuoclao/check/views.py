@@ -1,4 +1,6 @@
 import json
+import requests
+
 from pprint import pprint
 from django.shortcuts import render
 from django.template import loader
@@ -17,6 +19,7 @@ from .models import Host, Service, Alert, Group, Host_attribute, Group_attribute
 from .forms import AlertForm
 from lib.display_metric import Display
 from .serializers import GroupSerializer, GroupAttributeSerializer, HostSerializer, HostAttributeSerializer
+from thuoclao import settings
 
 
 def index(request):
@@ -31,6 +34,31 @@ def index(request):
         return render(request, 'check/index.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
+
+
+def help(request):
+    context = {"mtiket_server": settings.MTICKET_SERVER}
+    if settings.MTICKET_TOKEN == "":
+        context["notification"] = "MTicket token not set"
+    topics = requests.get(settings.LIST_TOPIC_LINK).json()
+    context["topics"] = topics
+
+    if request.method == "POST":
+        title = request.POST['title']
+        content = request.POST['content']
+        topic = request.POST['topic']
+        file_attach = request.POST['attach']
+        print(file_attach)
+        files = {'attach': open('/home/locvu/Desktop/pele.jpg','rb')}
+        data = {'title': title, 'topic': topic, 'content': content,
+                'auth_token': settings.MTICKET_TOKEN}
+        response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
+        print(files)
+        print(response)
+        # print(response.text)
+        context["response"] = response
+        return HttpResponseRedirect('/help')
+    return render(request, 'help.html', context)
 
 
 def get_data(request, pk_host, service_name, query_time):

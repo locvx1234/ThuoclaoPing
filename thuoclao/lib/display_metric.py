@@ -1,4 +1,5 @@
 from lib import utils
+from statistics import mode
 
 
 class Display(utils.Auth):
@@ -73,7 +74,8 @@ class Display(utils.Auth):
 
 
     def check_http_notify(self, oke, warning, critical):
-        data_status = self.client.query('select mean("loss") from http '
+        status_codes = []
+        data_status = self.client.query('select * from http '
                                         'where \"hostname\" = \'{}\' '
                                         'and \"group\" = \'{}\' '
                                         'and \"username\" = \'{}\' '
@@ -81,18 +83,24 @@ class Display(utils.Auth):
                                         .format(self.hostname, self.group, self.username))
         results_status = list(data_status.get_points(measurement='http'))
         print(results_status)
-        val_status = round(results_status[0]['mean'], 2)
+        # val_status = round(results_status[0]['mean'], 2)
+        for res in results_status:
+            status_codes.append(res["code"])
+        mode_code = mode(status_codes)
         time = results_status[0]['time']
-        if val_status < oke:
+        if mode_code < oke:
             status_id = 0
             status_text = "OK"
-        elif val_status < warning:
+        elif mode_code < warning:
             status_id = 1
             status_text = "Warning"
         else:
             status_id = 2
             status_text = "CRITICAL"
-        return status_id, val_status, time, status_text
+        return status_id, mode_code, time, status_text
+
+
+
 
 # display = Display('ping', '8.8.8.8', 'minhkma', '1m')
 # res = display.select()

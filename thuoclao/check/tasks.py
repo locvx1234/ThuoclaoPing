@@ -8,7 +8,12 @@ from influxdb import InfluxDBClient
 from requests_futures.sessions import FuturesSession
 import time
 from lib.display_metric import Display
+from celery.decorators import task
+from celery.utils.log import get_task_logger
+from celery import shared_task
 
+
+logger = get_task_logger(__name__)
 
 def get_fping():
     users = User.objects.all()
@@ -175,8 +180,8 @@ async def http_exec(loop, url, interval, hostname, group_name, user):
                                                           user))
 
 
-@background(schedule=0, queue="queue-http")
-def http():
+async def http():
+    logger.info("http nha")
     data_http = get_http()
     print(data_http)
     loop = asyncio.get_event_loop()
@@ -187,14 +192,14 @@ def http():
             hostname = info_url['hostname']
             group_name = info_url['group_name']
             interval = int(info_url['interval_check'])
-            print(url, hostname, group_name, interval)
+            # print(url, hostname, group_name, interval)
             loop.call_soon(loop.create_task, http_exec(loop, url, interval,
                                                        hostname, group_name, user))
     loop.run_forever()
-http()
 
-@background(schedule=0, queue="queue-ping")
-def fping():
+
+async def fping():
+    logger.info("ping nha")
     loop = asyncio.get_event_loop()
     data_ping = get_fping()
     print(data_ping)
@@ -205,14 +210,23 @@ def fping():
             group_name = info_ping['group_name']
             interval = int(info_ping['interval_ping'])
             number_packet = info_ping['number_packet']
-            print('fping -c {} {}'.format(number_packet, ip))
+            # print('fping -c {} {}'.format(number_packet, ip))
             loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
                            hostname, group_name, number_packet, ip))
     loop.run_forever()
-fping()
+# fping().delay()
+
+@shared_task
+def run():
+    task1 = asyncio.ensure_future(fping())
+    task2 = asyncio.ensure_future(http())
+    loop = asyncio.get_event_loop()
+    loop.run_forever()
+run()
 
 
-@background(schedule=5, )
+
+# @background(schedule=5, )
 def notify_user(user_id):
     # print(user_id)
     user = User.objects.get(id=user_id)

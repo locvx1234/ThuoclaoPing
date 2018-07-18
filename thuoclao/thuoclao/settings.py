@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'lib',
     'background_task',
     'rest_framework',
+    'thuoclao',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+
+
+# Ticket
+MTICKET_TOKEN = "c84964fd0ab36e4b044f7f4672e3fa7ce4fecf830343eeef"
+MTICKET_SERVER = "192.168.100.23"
+LIST_TOPIC_LINK = "http://{}/api/list_topic".format(MTICKET_SERVER)
+CREATE_TOPIC_LINK = "http://{}/api/tk_create".format(MTICKET_SERVER)
