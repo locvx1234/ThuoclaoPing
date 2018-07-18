@@ -59,8 +59,13 @@ class Display(utils.Auth):
                                         .format(self.hostname, self.group, self.username))
         results_status = list(data_status.get_points(measurement='ping'))
         print(results_status)
-        val_status = round(results_status[0]['mean'], 2)
-        time = results_status[0]['time']
+        try:
+            val_status = round(results_status[0]['mean'], 2)
+            time = results_status[0]['time']
+        except IndexError:
+            val_status = 0
+            time = 0
+            # time = results_status[0]['time']
         if val_status < oke:
             status_id = 0
             status_text = "OK"
