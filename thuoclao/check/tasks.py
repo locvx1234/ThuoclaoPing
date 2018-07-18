@@ -11,6 +11,7 @@ from lib.display_metric import Display
 from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery import shared_task
+from thuoclao import settings
 
 
 logger = get_task_logger(__name__)
@@ -225,8 +226,6 @@ def run():
 run()
 
 
-
-# @background(schedule=5, )
 def notify_user(user_id):
     # print(user_id)
     user = User.objects.get(id=user_id)
@@ -236,33 +235,59 @@ def notify_user(user_id):
 
     for host in hosts:
         display = Display(host.group.group_name, host.hostname, host.group.user.username)
-        alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
-        print(alert_data)
-        if alert_data[0] != host.status:  # status changed
-            host.status = alert_data[0]
-            host.save()
-            ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
-            message = """
-            *[{0}] Notify to check !!! {1}*
-            ```
-            Host : {1} 
-            Adress : {2}
-            Loss : {3}%
-            Status : {0}
-            ```
-            """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
-            if alert.email_alert:
-                alert.send_email(settings.FROM_EMAIL, [], 
-                            "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
-                            "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address, 
-                                                                              alert_data[1], alert_data[3]), 
-                            settings.PASSWD_MAIL, settings.SMTP_SERVER)
+        if host.group.service.service_name == "ping":
+            alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
+            # print(alert_data)
+            if alert_data[0] != host.status:  # status changed
+                host.status = alert_data[0]
+                host.save()
+                ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
+                email_message = "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address, 
+                                                                                  alert_data[1], alert_data[3])
+                tele_slack_message = """
+                *[{0}] Notify to check !!! {1}*
+                ```
+                Host : {1} 
+                Adress : {2}
+                Loss : {3}%
+                Status : {0}
+                ```
+                """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
+                sending(alert, host.hostname, email_message, tele_slack_message)
+                
+        elif host.group.service.service_name == "http":
+            alert_data = display.check_http_notify()
+            # print(alert_data)
+            if alert_data[0] != host.status:  # status changed
+                host.status = alert_data[0]
+                host.save()
+                url = host.host_attribute_set.get(attribute_name='url').value
+                email_message = "Hostname {} \nURL {} \nHTTP Code {} - {}".format(host.hostname, url, 
+                                                                                  alert_data[1], alert_data[3])
+                tele_slack_message = """
+                *[{0}] Notify to check !!! {1}*
+                ```
+                Host : {1} 
+                URL : {2}
+                HTTP Code : {3}
+                Status : {0}
+                ```
+                """.format(alert_data[3], host.hostname, url, alert_data[1])
+                sending(alert, host.hostname, email_message, tele_slack_message)
 
-            if alert.telegram_id:
-                alert.send_telegram_message(settings.TOKEN, message)
 
-            if alert.webhook:
-                alert.send_slack_message(message)
+def sending(alert, hostname, email_message, tele_slack_message):
+    if alert.email_alert:
+        alert.send_email(settings.FROM_EMAIL, [], 
+                        "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
+                        email_message, settings.PASSWD_MAIL, settings.SMTP_SERVER)
+
+    if alert.telegram_id:
+        alert.send_telegram_message(settings.TOKEN, tele_slack_message)
+
+    if alert.webhook:
+        alert.send_slack_message(tele_slack_message)
+
 
 all_user = User.objects.all()
 

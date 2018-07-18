@@ -149,8 +149,10 @@ FROM_EMAIL = 'poisonous1205@gmail.com'
 PASSWD_MAIL = 'minhnguyen'
 SMTP_SERVER = 'smtp.gmail.com:587'
 
+# Telegram token
 TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
 
+# Influx config
 INFLUXDB_DB = 'thuoclao'
 INFLUXDB_USER = 'minhkma'
 INFLUXDB_USER_PASSWORD = 'minhkma'
@@ -166,7 +168,7 @@ REST_FRAMEWORK = {
 }
 
 
-# Ticket
+# MTicket
 MTICKET_TOKEN = "c84964fd0ab36e4b044f7f4672e3fa7ce4fecf830343eeef"
 MTICKET_SERVER = "192.168.100.23"
 LIST_TOPIC_LINK = "http://{}/api/list_topic".format(MTICKET_SERVER)
