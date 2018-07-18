@@ -12,3 +12,5 @@ aiohttp==2.3.10
 SQLAlchemy==1.2.8
 PyMySQL==0.8.1
 tox==3.0.0
+djangorestframework==3.8.2
+requests_futures==0.9.7
