@@ -16,6 +16,9 @@ urlpatterns = [
     # The home page
     url(r'^$', views.index, name='index'),
 
+    # Support
+    url(r'^help/$', views.help, name='help'),
+
     # The config host page
     url(r'^host/(?P<service_name>[-\w]+)/$', views.host, name='host'),
     url(r'^host/(?P<service_name>[-\w]+)/delete/(?P<host_id>\d+)/$', views.delete_host, name='delete_host'),

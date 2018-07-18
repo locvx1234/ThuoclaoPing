@@ -8,7 +8,6 @@ setup(
     author='LocVU, MinhKMA',  # Optional
     extras_require={
         'dev': [
-            'pytest>=3',
             'tox',
         ],
     },
