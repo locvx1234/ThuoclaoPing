@@ -11,7 +11,9 @@ from lib.display_metric import Display
 from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery import shared_task
-
+from celery.decorators import periodic_task
+from celery.task.schedules import crontab
+from thuoclao import settings
 
 logger = get_task_logger(__name__)
 
@@ -214,19 +216,8 @@ async def fping():
             loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
                            hostname, group_name, number_packet, ip))
     loop.run_forever()
-# fping().delay()
-
-@shared_task
-def run():
-    task1 = asyncio.ensure_future(fping())
-    task2 = asyncio.ensure_future(http())
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
-run()
 
 
-
-# @background(schedule=5, )
 def notify_user(user_id):
     # print(user_id)
     user = User.objects.get(id=user_id)
@@ -236,40 +227,66 @@ def notify_user(user_id):
 
     for host in hosts:
         display = Display(host.group.group_name, host.hostname, host.group.user.username)
-        alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
-        print(alert_data)
-        if alert_data[0] != host.status:  # status changed
-            host.status = alert_data[0]
-            host.save()
-            ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
-            message = """
-            *[{0}] Notify to check !!! {1}*
-            ```
-            Host : {1} 
-            Adress : {2}
-            Loss : {3}%
-            Status : {0}
-            ```
-            """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
-            if alert.email_alert:
-                alert.send_email(settings.FROM_EMAIL, [], 
-                            "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
-                            "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address, 
-                                                                              alert_data[1], alert_data[3]), 
-                            settings.PASSWD_MAIL, settings.SMTP_SERVER)
+        if host.group.service.service_name == "ping":
+            alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
+            print(alert_data)
+            if alert_data[0] != host.status:  # status changed
+                host.status = alert_data[0]
+                host.save()
+                ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
+                if ip_address != None:
+                    message = """
+                    *[{0}] Notify to check !!! {1}*
+                    ```
+                    Host : {1}
+                    Adress : {2}
+                    Loss : {3}%
+                    Status : {0}
+                    ```
+                    """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
+                    if alert.email_alert:
+                        alert.send_email(settings.FROM_EMAIL, [],
+                                    "[{}] Notify to check {}".format(alert_data[3], host.hostname),
+                                    "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address,
+                                                                                      alert_data[1], alert_data[3]),
+                                    settings.PASSWD_MAIL, settings.SMTP_SERVER)
 
-            if alert.telegram_id:
-                alert.send_telegram_message(settings.TOKEN, message)
+                    if alert.telegram_id:
+                        alert.send_telegram_message(settings.TOKEN, message)
 
-            if alert.webhook:
-                alert.send_slack_message(message)
+                    if alert.webhook:
+                        alert.send_slack_message(message)
 
-all_user = User.objects.all()
 
-for user in all_user:
-    print(user)
-    try:
-        alert = Alert.objects.get(user=user)
-    except Alert.DoesNotExist:
-        break
-    notify_user(user.id, repeat=alert.delay_check)
+# @periodic_task(
+#     run_every=(crontab(minute='*/1')),
+#     name="notify_ping",
+#     ignore_result=True
+# )
+async def notify_ping():
+    all_user = User.objects.all()
+    loop = asyncio.get_event_loop()
+    for user in all_user:
+        try:
+            alert = Alert.objects.get(user=user)
+            interval = alert.delay_check
+            loop.call_soon(loop.create_task, send_notify_ping(loop, user, interval))
+        except Alert.DoesNotExist:
+            continue
+    loop.run_forever()
+
+
+async def send_notify_ping(loop, user, interval):
+    print(user.id)
+    print('minhdeptrai')
+    notify_user(user.id)
+    loop.call_later(interval, loop.create_task, send_notify_ping(loop, user, interval))
+
+@shared_task
+def run():
+    task1 = asyncio.ensure_future(fping())
+    task2 = asyncio.ensure_future(http())
+    task3 = asyncio.ensure_future(notify_ping())
+    loop = asyncio.get_event_loop()
+    loop.run_forever()
+run()
