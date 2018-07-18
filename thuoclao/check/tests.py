@@ -1,6 +1,13 @@
 from django.test import TestCase, Client
+from unittest.mock import patch
 from check.models import Group, Group_attribute, Host_attribute, Service, Host, Alert
 from django.contrib.auth.models import User
+from lib.utils import Auth
+from lib.display_metric import Display
+from influxdb import InfluxDBClient
+import requests
+import requests.exceptions
+import requests_mock
 from lib.utils import Auth
 
 
@@ -100,3 +107,60 @@ class TestViews(TestCase):
     def test_host_http(self):
         response = self.client.get("/host/http")
         self.assertEqual(response.status_code, 301)
+
+
+class TestInfluxDBClient(TestCase, Auth):
+    """Set up the TestInfluxDBClient object."""
+
+    def setUp(self):
+        """Initialize an instance of TestInfluxDBClient object."""
+        # By default, raise exceptions on warnings
+        self.authen = Auth()
+        self.cli = self.authen.auth(host_db='localhost',
+                             port= 8086,
+                             username= 'username',
+                             password= 'password',
+                             database='database')
+        self.dummy_points = [
+            {
+                "measurement": "cpu_load_short",
+                "tags": {
+                    "host": "server01",
+                    "region": "us-west"
+                },
+                "time": "2009-11-10T23:00:00.123456Z",
+                "fields": {
+                    "value": 0.64
+                }
+            }
+        ]
+
+
+    def test_scheme(self):
+        self.assertEqual('http://localhost:8086', self.cli._baseurl)
+
+
+    def test_write(self):
+        """Test write in TestInfluxDBClient object."""
+        with requests_mock.Mocker() as m:
+            m.register_uri(
+                requests_mock.POST,
+                "http://localhost:8086/write",
+                status_code=204
+            )
+            # cli = InfluxDBClient(database='db')
+            self.cli.write(
+                {"database": "mydb",
+                 "retentionPolicy": "mypolicy",
+                 "points": [{"measurement": "cpu_load_short",
+                             "tags": {"host": "server01",
+                                      "region": "us-west"},
+                             "time": "2009-11-10T23:00:00Z",
+                             "fields": {"value": 0.64}}]}
+            )
+
+            self.assertEqual(
+                m.last_request.body,
+                b"cpu_load_short,host=server01,region=us-west "
+                b"value=0.64 1257894000000000000\n",
+            )
