@@ -162,7 +162,7 @@ def bg_cb(sess, resp, hostname, group_name, user, host_db=None, port=None,
 
 
 async def http_exec(loop, url, interval, hostname, group_name, user):
-    session.get(url, background_callback=lambda sess,
+    future = session.get(url, background_callback=lambda sess,
                 resp: bg_cb(sess, resp, hostname=hostname,
                             group_name=group_name, user=user))
 
@@ -291,9 +291,9 @@ async def notice_to_each_user(loop, user, interval):
 
 @shared_task
 def run():
-    asyncio.ensure_future(fping())
-    asyncio.ensure_future(http())
-    asyncio.ensure_future(notify())
+    task1 = asyncio.ensure_future(fping())
+    task2 = asyncio.ensure_future(http())
+    task3 = asyncio.ensure_future(notify())
     loop = asyncio.get_event_loop()
     loop.run_forever()
 
