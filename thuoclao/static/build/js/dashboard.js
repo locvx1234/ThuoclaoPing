@@ -74,7 +74,7 @@ $(window).load(function(){
                         var chart = new CanvasJS.Chart(id_chart, {
                             exportEnabled: true,
                             title: {
-                               text: "Respone time"
+                            //    text: "Respone time"
                             },
                             axisY: {
                                 includeZero: false,
