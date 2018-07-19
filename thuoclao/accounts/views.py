@@ -3,15 +3,13 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import (
     authenticate,
-    get_user_model,
     login,
-    logout
 )
 
 from .forms import UserForm, UserProfileForm, UserRegisterForm
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -24,9 +22,9 @@ def register(request):
         user.set_password(password)
         user.save()
         authenticate(username=user.username, password=user.password)
-        login(request,user)
+        login(request, user)
         return redirect("/")
-    return render(request, 'accounts/reg_form.html', {"form":form})
+    return render(request, 'accounts/reg_form.html', {"form": form})
 
 
 def view_profile(request, pk=None):

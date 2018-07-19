@@ -1,7 +1,6 @@
 import json
 import requests
 
-from pprint import pprint
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponse
@@ -49,7 +48,7 @@ def help(request):
         topic = request.POST['topic']
         file_attach = request.POST['attach']
         print(file_attach)
-        files = {'attach': open('/home/locvu/Desktop/pele.jpg','rb')}
+        files = {'attach': open('/home/locvu/Desktop/pele.jpg', 'rb')}
         data = {'title': title, 'topic': topic, 'content': content,
                 'auth_token': settings.MTICKET_TOKEN}
         response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
@@ -287,7 +286,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
     serializer_class = GroupSerializer
-    
+
     def get_queryset(self):
         user = self.request.user
         queryset = Group.objects.filter(user=user)

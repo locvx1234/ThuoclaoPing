@@ -1,28 +1,25 @@
-from background_task import background
-from django.contrib.auth.models import User
-from .models import Alert, Host, Service, Group, Group_attribute
-import asyncio
 import re
+import asyncio
+
 from datetime import datetime
 from influxdb import InfluxDBClient
 from requests_futures.sessions import FuturesSession
-import time
-from lib.display_metric import Display
-from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery import shared_task
-from celery.decorators import periodic_task
-from celery.task.schedules import crontab
+from django.contrib.auth.models import User
+
+from .models import Alert, Host, Service, Group
+from lib.display_metric import Display
 from thuoclao import settings
 
 
 logger = get_task_logger(__name__)
 
+
 def get_fping():
     users = User.objects.all()
     data = {}
     for user in users:
-        # print(user.username)
         service = Service.objects.get(service_name='ping')
         user = User.objects.get(username=user.username)
         all_groups = Group.objects.filter(user_id=user.id, service=service)
@@ -30,14 +27,13 @@ def get_fping():
         hosts = []
         for host in all_hosts:
             item = {'id': host.id, 'hostname': host.hostname, 'status': host.status,
-                'description': host.description, 'group_name': host.group.group_name}
+                    'description': host.description, 'group_name': host.group.group_name}
             ip_addr = host.host_attribute_set.get(attribute_name='ip_address')
             item['ip_address'] = ip_addr.value
             item['number_packet'] = host.group.group_attribute_set.get(attribute_name='number_packet').value
             item['interval_ping'] = host.group.group_attribute_set.get(attribute_name='interval_ping').value
             hosts.append(item)
         data[user.username] = hosts
-    # print(data)
     return data
 
 
@@ -45,7 +41,6 @@ def get_http():
     users = User.objects.all()
     data = {}
     for user in users:
-        # print(user.username)
         service = Service.objects.get(service_name='http')
         user = User.objects.get(username=user.username)
         all_groups = Group.objects.filter(user_id=user.id, service=service)
@@ -59,7 +54,6 @@ def get_http():
             item['url'] = url.value
             hosts.append(item)
         data[user.username] = hosts
-    # print(data)
     return data
 
 
@@ -107,8 +101,8 @@ async def custom_sleep(interval, user, hostname, group_name, stdout, stderr):
     for line in stderr.decode().split('\n'):
         data = fping_regex.match(line)
         if data:
-            write_influxdb(data=data, user= user, hostname= hostname,
-                           group_name= group_name)
+            write_influxdb(data=data, user=user, hostname=hostname,
+                           group_name=group_name)
     print('SLEEP {}\n'.format(datetime.now()))
 
 
@@ -139,9 +133,9 @@ async def loop_exec(loop, interval, user,
 
 session = FuturesSession()
 
-def bg_cb(sess, resp, hostname, group_name, user,
-          host_db= None, port= None, username= None,
-                   password= None, database= None):
+
+def bg_cb(sess, resp, hostname, group_name, user, host_db=None, port=None,
+          username=None, password=None, database=None):
     host_db = host_db or '192.168.30.67'
     port = port or 8086
     username = username or 'minhkma'
@@ -165,44 +159,37 @@ def bg_cb(sess, resp, hostname, group_name, user,
         }
     ]
     client.write_points(json_body)
-    # print("<---  {}".format(time.time()))
 
 
 async def http_exec(loop, url, interval, hostname, group_name, user):
-    future = session.get(url,
-                         background_callback=lambda sess,
-                                                    resp: bg_cb(sess,
-                                                                resp,
-                                                                hostname= hostname,
-                                                                group_name=group_name,
-                                                                user=user))
-    # response = future.result()
-    # pprint(response.data)
-    loop.call_later(int(interval), loop.create_task, http_exec(loop, url, int(interval),
-                                                          hostname, group_name,
-                                                          user))
+    session.get(url, background_callback=lambda sess,
+                resp: bg_cb(sess, resp, hostname=hostname,
+                            group_name=group_name, user=user))
+
+    loop.call_later(int(interval), loop.create_task,
+                    http_exec(loop, url, int(interval),
+                    hostname, group_name, user))
 
 
 async def http():
-    logger.info("http nha")
+    logger.info("run def http")
     data_http = get_http()
     print(data_http)
     loop = asyncio.get_event_loop()
     for user in data_http:
         for count, info_url in enumerate(data_http[user]):
             url = info_url['url']
-            # print(url)
             hostname = info_url['hostname']
             group_name = info_url['group_name']
             interval = int(info_url['interval_check'])
-            # print(url, hostname, group_name, interval)
+
             loop.call_soon(loop.create_task, http_exec(loop, url, interval,
                                                        hostname, group_name, user))
     loop.run_forever()
 
 
 async def fping():
-    logger.info("ping nha")
+    logger.info("run def ping")
     loop = asyncio.get_event_loop()
     data_ping = get_fping()
     print(data_ping)
@@ -213,68 +200,68 @@ async def fping():
             group_name = info_ping['group_name']
             interval = int(info_ping['interval_ping'])
             number_packet = info_ping['number_packet']
-            # print('fping -c {} {}'.format(number_packet, ip))
+
             loop.call_soon(loop.create_task, loop_exec(loop, interval, user,
                            hostname, group_name, number_packet, ip))
     loop.run_forever()
 
 
-def notify_user(user_id):
-    # print(user_id)
+def handle_notification(user_id):
     user = User.objects.get(id=user_id)
     alert = Alert.objects.get(user=user)
     groups = Group.objects.filter(user=user)
     hosts = Host.objects.filter(group__in=groups)
 
     for host in hosts:
+        print(user.username + " - " + host.hostname)
         display = Display(host.group.group_name, host.hostname, host.group.user.username)
         if host.group.service.service_name == "ping":
             alert_data = display.check_ping_notify(host.group.ok, host.group.warning, host.group.critical)
-            # print(alert_data)
 
             if alert_data[0] != host.status:  # status changed
                 host.status = alert_data[0]
                 host.save()
                 ip_address = host.host_attribute_set.get(attribute_name='ip_address').value
-                email_message = "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address, 
+                email_title = "[{}] Notify to check {}".format(alert_data[3], host.hostname)
+                email_message = "Hostname {} \nAddress {} \nLoss {}% - {}".format(host.hostname, ip_address,
                                                                                   alert_data[1], alert_data[3])
                 tele_slack_message = """
                 *[{0}] Notify to check !!! {1}*
                 ```
-                Host : {1} 
+                Host : {1}
                 Adress : {2}
                 Loss : {3}%
                 Status : {0}
                 ```
                 """.format(alert_data[3], host.hostname, ip_address, alert_data[1])
-                sending(alert, host.hostname, email_message, tele_slack_message)
-                
+                sending(alert, email_title, email_message, tele_slack_message)
+
         elif host.group.service.service_name == "http":
             alert_data = display.check_http_notify()
-            # print(alert_data)
+
             if alert_data[0] != host.status:  # status changed
                 host.status = alert_data[0]
                 host.save()
                 url = host.host_attribute_set.get(attribute_name='url').value
-                email_message = "Hostname {} \nURL {} \nHTTP Code {} - {}".format(host.hostname, url, 
+                email_title = "[{}] Notify to check {}".format(alert_data[3], host.hostname)
+                email_message = "Hostname {} \nURL {} \nHTTP Code {} - {}".format(host.hostname, url,
                                                                                   alert_data[1], alert_data[3])
                 tele_slack_message = """
                 *[{0}] Notify to check !!! {1}*
                 ```
-                Host : {1} 
+                Host : {1}
                 URL : {2}
                 HTTP Code : {3}
                 Status : {0}
                 ```
                 """.format(alert_data[3], host.hostname, url, alert_data[1])
-                sending(alert, host.hostname, email_message, tele_slack_message)
+                sending(alert, email_title, email_message, tele_slack_message)
 
 
-def sending(alert, hostname, email_message, tele_slack_message):
+def sending(alert, email_title, email_message, tele_slack_message):
     if alert.email_alert:
-        alert.send_email(settings.FROM_EMAIL, [], 
-                        "[{}] Notify to check {}".format(alert_data[3], host.hostname), 
-                        email_message, settings.PASSWD_MAIL, settings.SMTP_SERVER)
+        alert.send_email(settings.FROM_EMAIL, [], email_title,
+                         email_message, settings.PASSWD_MAIL, settings.SMTP_SERVER)
 
     if alert.telegram_id:
         alert.send_telegram_message(settings.TOKEN, tele_slack_message)
@@ -283,36 +270,32 @@ def sending(alert, hostname, email_message, tele_slack_message):
         alert.send_slack_message(tele_slack_message)
 
 
-# @periodic_task(
-#     run_every=(crontab(minute='*/1')),
-#     name="notify_ping",
-#     ignore_result=True
-# )
-async def notify_ping():
+async def notify():
     all_user = User.objects.all()
     loop = asyncio.get_event_loop()
     for user in all_user:
         try:
             alert = Alert.objects.get(user=user)
             interval = alert.delay_check
-            loop.call_soon(loop.create_task, send_notify_ping(loop, user, interval))
+            loop.call_soon(loop.create_task, notice_to_each_user(loop, user, interval))
         except Alert.DoesNotExist:
             continue
     loop.run_forever()
 
 
-async def send_notify_ping(loop, user, interval):
-    print(user.id)
-    print('minhdeptrai')
-    notify_user(user.id)
-    loop.call_later(interval, loop.create_task, send_notify_ping(loop, user, interval))
+async def notice_to_each_user(loop, user, interval):
+    print("Notice user : " + user.username)
+    handle_notification(user.id)
+    loop.call_later(interval, loop.create_task, notice_to_each_user(loop, user, interval))
+
 
 @shared_task
 def run():
-    task1 = asyncio.ensure_future(fping())
-    task2 = asyncio.ensure_future(http())
-    task3 = asyncio.ensure_future(notify_ping())
+    asyncio.ensure_future(fping())
+    asyncio.ensure_future(http())
+    asyncio.ensure_future(notify())
     loop = asyncio.get_event_loop()
     loop.run_forever()
-run()
 
+
+run()
