@@ -5,7 +5,8 @@ from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thuoclao.settings')
-app = Celery('thuoclao', broker='redis://localhost:6379/0')
+broker = 'redis://{}/0'.format(settings.REDIS_SERVER)
+app = Celery('thuoclao', broker=broker)
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
