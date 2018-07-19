@@ -1,4 +1,5 @@
 import configparser
+
 from influxdb import InfluxDBClient
 from django.contrib.auth.models import User
 from check.models import Host, Service
@@ -39,7 +40,3 @@ class Sqlite(object):
                 dict_hosts[ser.service_name] = IPs
             dict_users[user.username] = dict_hosts
         return dict_users
-
-
-def restart_celery():
-    pass

@@ -163,8 +163,8 @@ def bg_cb(sess, resp, hostname, group_name, user, host_db=None, port=None,
 
 async def http_exec(loop, url, interval, hostname, group_name, user):
     future = session.get(url, background_callback=lambda sess,
-                resp: bg_cb(sess, resp, hostname=hostname,
-                            group_name=group_name, user=user))
+                         resp: bg_cb(sess, resp, hostname=hostname,
+                                     group_name=group_name, user=user))
 
     loop.call_later(int(interval), loop.create_task,
                     http_exec(loop, url, int(interval),

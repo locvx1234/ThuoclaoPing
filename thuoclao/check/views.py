@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 
@@ -180,6 +181,8 @@ def host(request, service_name):
                                                       value=interval_check, type_value=0)
                 attr_interval_check.save()
 
+        # update background tasks
+        os.system('supervisorctl restart celery')
         return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
     context = {'hosts': hosts, 'groups': groups}
@@ -189,12 +192,18 @@ def host(request, service_name):
 def delete_host(request, service_name, host_id):
     host_query = Host.objects.filter(id=host_id)
     host_query.delete()
+
+    # update background tasks
+    os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
 def delete_group(request, service_name, group_id):
     group_query = Group.objects.filter(id=group_id)
     group_query.delete()
+
+    # update background tasks
+    os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
@@ -216,6 +225,8 @@ def edit_host(request, service_name, host_id):
         host_query.save()
         host_attr_data.save()
 
+        # update background tasks
+        os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
@@ -242,6 +253,9 @@ def edit_group(request, service_name, group_id):
             attr_interval_check = Group_attribute.objects.get(group=group_query, attribute_name="interval_check")
             attr_interval_check.value = request.POST.get('interval_check')
             attr_interval_check.save()
+
+        # update background tasks
+        os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
