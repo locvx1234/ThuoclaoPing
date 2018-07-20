@@ -1,7 +1,7 @@
+import os
 import json
 import requests
 
-from pprint import pprint
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponseRedirect, HttpResponse
@@ -40,7 +40,11 @@ def help(request):
     context = {"mtiket_server": settings.MTICKET_SERVER}
     if settings.MTICKET_TOKEN == "":
         context["notification"] = "MTicket token not set"
-    topics = requests.get(settings.LIST_TOPIC_LINK).json()
+    try:
+        topics = requests.get(settings.LIST_TOPIC_LINK, timeout=5).json()
+    except requests.exceptions.ConnectTimeout:
+        topics = None
+        context['notification'] = "Disconnect MTicket server"
     context["topics"] = topics
 
     if request.method == "POST":
@@ -49,7 +53,7 @@ def help(request):
         topic = request.POST['topic']
         file_attach = request.POST['attach']
         print(file_attach)
-        files = {'attach': open('/home/locvu/Desktop/pele.jpg','rb')}
+        files = {'attach': open('/home/locvu/Desktop/pele.jpg', 'rb')}
         data = {'title': title, 'topic': topic, 'content': content,
                 'auth_token': settings.MTICKET_TOKEN}
         response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
@@ -181,6 +185,8 @@ def host(request, service_name):
                                                       value=interval_check, type_value=0)
                 attr_interval_check.save()
 
+        # update background tasks
+        os.system('supervisorctl restart celery')
         return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
     context = {'hosts': hosts, 'groups': groups}
@@ -190,12 +196,18 @@ def host(request, service_name):
 def delete_host(request, service_name, host_id):
     host_query = Host.objects.filter(id=host_id)
     host_query.delete()
+
+    # update background tasks
+    os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
 def delete_group(request, service_name, group_id):
     group_query = Group.objects.filter(id=group_id)
     group_query.delete()
+
+    # update background tasks
+    os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
@@ -217,6 +229,8 @@ def edit_host(request, service_name, host_id):
         host_query.save()
         host_attr_data.save()
 
+        # update background tasks
+        os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
@@ -243,6 +257,9 @@ def edit_group(request, service_name, group_id):
             attr_interval_check = Group_attribute.objects.get(group=group_query, attribute_name="interval_check")
             attr_interval_check.value = request.POST.get('interval_check')
             attr_interval_check.save()
+
+        # update background tasks
+        os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
 
 
@@ -287,7 +304,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
     serializer_class = GroupSerializer
-    
+
     def get_queryset(self):
         user = self.request.user
         queryset = Group.objects.filter(user=user)

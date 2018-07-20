@@ -5,8 +5,6 @@ from accounts.models import UserProfile
 from django.contrib.auth import (
     authenticate,
     get_user_model,
-    login,
-    logout,
 )
 
 User = get_user_model()
@@ -26,27 +24,28 @@ class UserProfileForm(forms.ModelForm):
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(
-        attrs={               
+        attrs={
             'class': 'form-control',
             'placeholder': 'Username',
         }
     ))
     password = forms.CharField(widget=forms.PasswordInput(
-        attrs={               
+        attrs={
             'class': 'form-control',
             'placeholder': 'Password',
         }
     ))
+
     def clean(self, *args, **kwargs):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        user = authenticate(username=username, password= password)
+        user = authenticate(username=username, password=password)
         if not user:
             raise forms.ValidationError("This is User does not exist")
         if not user.check_password(password):
             raise forms.ValidationError("Incorrect password")
         if not user.is_active:
-            raise forms.ValidationError("This user is not longer active")       
+            raise forms.ValidationError("This user is not longer active")
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
 
@@ -61,7 +60,7 @@ class UserRegisterForm(forms.ModelForm):
         'placeholder': 'Email'
     })
     )
-    password = forms.CharField(widget=forms.PasswordInput(attrs={               
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Password'
     })
@@ -80,13 +79,14 @@ class UserRegisterForm(forms.ModelForm):
             'password',
             'password2'
         ]
-    def clean(self, *args, **kwargs):       
+
+    def clean(self, *args, **kwargs):
         username = self.cleaned_data.get('username')
         if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
             raise forms.ValidationError(u'Username "%s" is already in use.' % username)
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
-        
+
         if password != password2:
-            raise forms.ValidationError("Password must match")        
+            raise forms.ValidationError("Password must match")
         return super(UserRegisterForm, self).clean(*args, **kwargs)

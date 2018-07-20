@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'check',
     'accounts',
     'lib',
-    'background_task',
     'rest_framework',
     'thuoclao',
 ]
@@ -88,7 +87,7 @@ DATABASES = {
         # 'USER': 'root',
         # 'PASSWORD': '123456',
         # 'HOST': 'db',
-        'NAME': 'thuoclao_locvu4',
+        'NAME': 'mping',
         'USER': 'thuoclao',
         'PASSWORD': 'thuoclao',
         'HOST': '192.168.30.61',
@@ -145,6 +144,7 @@ LOGIN_REDIRECT_URL = 'index'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
 
+# Email send notification
 FROM_EMAIL = 'poisonous1205@gmail.com'
 PASSWD_MAIL = 'minhnguyen'
 SMTP_SERVER = 'smtp.gmail.com:587'
@@ -158,8 +158,8 @@ INFLUXDB_USER = 'minhkma'
 INFLUXDB_USER_PASSWORD = 'minhkma'
 INFLUXDB_HOST = '192.168.30.67'
 INFLUXDB_PORT = "8086"
-# BACKGROUND_TASK_RUN_ASYNC = True
 
+# Authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -173,3 +173,6 @@ MTICKET_TOKEN = "c84964fd0ab36e4b044f7f4672e3fa7ce4fecf830343eeef"
 MTICKET_SERVER = "192.168.100.23"
 LIST_TOPIC_LINK = "http://{}/api/list_topic".format(MTICKET_SERVER)
 CREATE_TOPIC_LINK = "http://{}/api/tk_create".format(MTICKET_SERVER)
+
+# Redis
+REDIS_SERVER = 'localhost:6379'

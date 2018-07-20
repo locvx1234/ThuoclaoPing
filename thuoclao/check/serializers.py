@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Group, Group_attribute, Host, Host_attribute
-from django.contrib.auth.models import User
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -13,11 +12,11 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class GroupAttributeSerializer(serializers.ModelSerializer):
     # group = GroupSerializer()
-    
+
     def get_group(self):
         group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.filter(user=self.request.user))
         return group
-    
+
     class Meta:
         model = Group_attribute
         fields = '__all__'
