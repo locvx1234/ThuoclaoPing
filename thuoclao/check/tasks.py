@@ -1,19 +1,15 @@
-from background_task import background
-from django.contrib.auth.models import User
-from .models import Alert, Host, Service, Group, Group_attribute
 import asyncio
 import re
 from datetime import datetime
 from influxdb import InfluxDBClient
 from requests_futures.sessions import FuturesSession
-import time
-from lib.display_metric import Display
-from celery.decorators import task
-from celery.utils.log import get_task_logger
 from celery import shared_task
-from celery.decorators import periodic_task
-from celery.task.schedules import crontab
+from celery.utils.log import get_task_logger
 from thuoclao import settings
+
+from django.contrib.auth.models import User
+from .models import Alert, Host, Service, Group, Group_attribute
+from lib.display_metric import Display
 
 
 logger = get_task_logger(__name__)
@@ -71,11 +67,11 @@ fping_regex = re.compile(
 def write_influxdb(data, user, hostname, group_name,
                    host_db=None, port=None, username=None,
                    password=None, database=None):
-    host_db = host_db or '192.168.30.67'
-    port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
-    database = database or 'thuoclao'
+    host_db = host_db or settings.INFLUXDB_HOST
+    port = port or settings.INFLUXDB_PORT
+    username = username or settings.INFLUXDB_USER
+    password = password or settings.INFLUXDB_USER_PASSWORD
+    database = database or settings.INFLUXDB_DB
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
     json_body = [
@@ -142,11 +138,11 @@ session = FuturesSession()
 def bg_cb(sess, resp, hostname, group_name, user,
           host_db= None, port= None, username= None,
                    password= None, database= None):
-    host_db = host_db or '192.168.30.67'
-    port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
-    database = database or 'thuoclao'
+    host_db = host_db or settings.INFLUXDB_HOST
+    port = port or settings.INFLUXDB_PORT
+    username = username or settings.INFLUXDB_USER
+    password = password or settings.INFLUXDB_USER_PASSWORD
+    database = database or settings.INFLUXDB_DB
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
     json_body = [
@@ -256,12 +252,12 @@ def notify_user(user_id):
                 host.status = alert_data[0]
                 host.save()
                 url = host.host_attribute_set.get(attribute_name='url').value
-                email_message = "Hostname {} \nURL {} \nHTTP Code {} - {}".format(host.hostname, url, 
+                email_message = "Hostname {} \nURL {} \nHTTP Code {} - {}".format(host.hostname, url,
                                                                                   alert_data[1], alert_data[3])
                 tele_slack_message = """
                 *[{0}] Notify to check !!! {1}*
                 ```
-                Host : {1} 
+                Host : {1}
                 URL : {2}
                 HTTP Code : {3}
                 Status : {0}
