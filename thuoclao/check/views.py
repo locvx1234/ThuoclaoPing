@@ -40,7 +40,11 @@ def help(request):
     context = {"mtiket_server": settings.MTICKET_SERVER}
     if settings.MTICKET_TOKEN == "":
         context["notification"] = "MTicket token not set"
-    topics = requests.get(settings.LIST_TOPIC_LINK).json()
+    try:
+        topics = requests.get(settings.LIST_TOPIC_LINK, timeout=5).json()
+    except requests.exceptions.ConnectTimeout:
+        topics = None
+        context['notification'] = "Disconnect MTicket server"
     context["topics"] = topics
 
     if request.method == "POST":

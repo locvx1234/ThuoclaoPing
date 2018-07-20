@@ -4,7 +4,7 @@
  
 Environment 
 -----------
-python3.5
+python3.6
 
 pip9.0.2
 
@@ -12,47 +12,44 @@ pip9.0.2
 Install
 -------
 
-Use Virtualenv [Options]
+Clone source code and install dependences :
 
 ```
-$ virtualenv -p python3 env
-$ source env/bin/activate
+apt update && apt install -y fping redis-server
+git clone https://github.com/locvx1234/ThuoclaoPing
+mkdir /code
+cp -r ThuoclaoPing/* /code
+cd /code
+pip install -r requirements.txt
 ```
 
-Clone and install dependences :
+Mysql:
+
+Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
+
+Import database 
+
+
+
+
+Supervisor:
 
 ```
-(env)$ git clone https://github.com/locvx1234/ThuoclaoPing
-(env)$ cd ThuoclaoPing
-(env)$ pip install -r requirements.txt
+apt install -y supervisor
+cp /code/supervisor/supervisord.conf /etc/supervisor/conf.d/
+supervisorctl reload
+supervisorctl start all
 ```
 
-Create databate : 
+Nginx: 
 
 ```
-(env)$ cd thuoclao
-(env)$ python manage.py makemigrations
-(env)$ python manage.py migrate
+apt install -y nginx
+ufw allow 'Nginx HTTP'
+cp /code/nginx/nginx.conf /etc/nginx/conf.d/
+sed -i 's/include \/etc\/nginx\/sites-enabled/#include \/etc\/nginx\/sites-enabled/g' /etc/nginx/nginx.conf
+systemctl restart nginx
 ```
-
-Create superuser:
-
-```
-(env)$ python manage.py createsuperuser
-```
-
-Runserver: 
-
-```
-(env)$ python manage.py runserver 0.0.0.0:8000
-```
-
-Another session:
-
-```
-(env)$ python manage.py process_tasks
-```
-
 
 Docker
 ------
