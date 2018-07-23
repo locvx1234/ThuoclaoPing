@@ -18,6 +18,7 @@ from rest_framework import status
 from .models import Host, Service, Alert, Group, Host_attribute, Group_attribute
 from .forms import AlertForm
 from lib.display_metric import Display
+from lib.display_metric import Info
 from .serializers import GroupSerializer, GroupAttributeSerializer, HostSerializer, HostAttributeSerializer
 from thuoclao import settings
 
@@ -32,6 +33,13 @@ def index(request):
                    'count_service': len(services), 'groups': groups}
 
         return render(request, 'check/index.html', context)
+    else:
+        return HttpResponseRedirect('/accounts/login')
+
+
+def information(request):
+    if request.user.is_authenticated:
+        return render(request, 'check/information.html')
     else:
         return HttpResponseRedirect('/accounts/login')
 
@@ -53,13 +61,11 @@ def help(request):
         topic = request.POST['topic']
         file_attach = request.POST['attach']
         print(file_attach)
-        files = {'attach': open('/home/locvu/Desktop/pele.jpg', 'rb')}
+
         data = {'title': title, 'topic': topic, 'content': content,
                 'auth_token': settings.MTICKET_TOKEN}
         response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
-        print(files)
         print(response)
-        # print(response.text)
         context["response"] = response
         return HttpResponseRedirect('/help')
     return render(request, 'help.html', context)
@@ -90,6 +96,18 @@ def total_parameter(request):
         total_warning = hosts.filter(status=1).count()
         total_critical = hosts.filter(status=2).count()
         context = {'total_ok': total_ok, 'total_warning': total_warning, 'total_critical': total_critical}
+        json_data = json.dumps(context)
+        print(json_data)
+        return HttpResponse(json_data, content_type="application/json")
+
+
+def total_info_influxdb(request):
+    if request.is_ajax():
+        info = Info()
+        total_measuere = info.series_total()
+        total_series = info.series_total()
+        avg_query = info.avg_query()
+        context = {'total_measuere': total_measuere, 'total_series': total_series, 'avg_query': avg_query}
         json_data = json.dumps(context)
         print(json_data)
         return HttpResponse(json_data, content_type="application/json")
@@ -162,10 +180,11 @@ def host(request, service_name):
                 ok = request.POST.get('ok')
                 warning = request.POST.get('warning')
                 critical = request.POST.get('critical')
+                group_data = Group(user=user, service=service, group_name=group_name, description=description,
+                                   ok=ok, warning=warning, critical=critical)
             if service_name == 'http':
-                pass
-            group_data = Group(user=user, service=service, group_name=group_name, description=description,
-                               ok=ok, warning=warning, critical=critical)
+                group_data = Group(user=user, service=service, group_name=group_name, description=description)
+
             group_data.save()
 
             if service_name == 'ping':

@@ -87,7 +87,7 @@ DATABASES = {
         # 'USER': 'root',
         # 'PASSWORD': '123456',
         # 'HOST': 'db',
-        'NAME': 'mping',
+        'NAME': 'thuoclao',
         'USER': 'thuoclao',
         'PASSWORD': 'thuoclao',
         'HOST': '192.168.30.61',

@@ -65,11 +65,11 @@ fping_regex = re.compile(
 def write_influxdb(data, user, hostname, group_name,
                    host_db=None, port=None, username=None,
                    password=None, database=None):
-    host_db = host_db or '192.168.30.67'
-    port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
-    database = database or 'thuoclao'
+    host_db = host_db or settings.INFLUXDB_HOST
+    port = port or settings.INFLUXDB_PORT
+    username = username or settings.INFLUXDB_USER
+    password = password or settings.INFLUXDB_USER_PASSWORD
+    database = database or settings.INFLUXDB_DB
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
     json_body = [
@@ -136,11 +136,11 @@ session = FuturesSession()
 
 def bg_cb(sess, resp, hostname, group_name, user, host_db=None, port=None,
           username=None, password=None, database=None):
-    host_db = host_db or '192.168.30.67'
-    port = port or 8086
-    username = username or 'minhkma'
-    password = password or 'minhkma'
-    database = database or 'thuoclao'
+    host_db = host_db or settings.INFLUXDB_HOST
+    port = port or settings.INFLUXDB_PORT
+    username = username or settings.INFLUXDB_USER
+    password = password or settings.INFLUXDB_USER_PASSWORD
+    database = database or settings.INFLUXDB_DB
     client = InfluxDBClient(host=host_db, port=port, username=username,
                             password=password, database=database)
     json_body = [

@@ -2,6 +2,8 @@ import datetime
 import statistics
 
 from lib import utils
+from thuoclao import settings
+from influxdb import InfluxDBClient
 
 
 class Display(utils.Auth):
@@ -95,3 +97,33 @@ class Display(utils.Auth):
 
         print(str(mode_code))
         return status_id, mode_code, time, status_text
+
+
+class Info(utils.Auth):
+    def __init__(self):
+        self.client_info = self.auth(host_db=settings.INFLUXDB_HOST,
+                                     port=settings.INFLUXDB_PORT,
+                                     username=settings.INFLUXDB_USER,
+                                     password=settings.INFLUXDB_USER_PASSWORD,
+                                     database='_internal')
+
+    def series_total(self):
+        series_total = self.client_info.query('SELECT mean("numSeries")'
+                                              ' FROM \"database\"'
+                                              ' WHERE time > now() - 24h')
+        results_series_total = list(series_total.get_points(measurement='database'))
+        return round(results_series_total[0]['mean'], 0)
+
+    def measure_total(self):
+        measure_total = self.client_info.query('SELECT mean("numMeasurements")'
+                                               ' FROM \"database\"'
+                                               ' WHERE time > now() - 24h')
+        results_measure_total = list(measure_total.get_points(measurement='database'))
+        return round(results_measure_total[0]['mean'], 0)
+
+    def avg_query(self):
+        avg_query = self.client_info.query('SELECT mean("queryDurationNs")'
+                                           ' FROM  "monitor"."queryExecutor"'
+                                           ' WHERE time > now() - 1m')
+        results_avg_query = list(avg_query.get_points(measurement='queryExecutor'))
+        return round(results_avg_query[0]['mean']/1000000000, 2)
