@@ -13,7 +13,7 @@ Install
 Clone source code and install dependences:
 
 ```
-apt update && apt install -y python3-pip fping redis-server mysql-client-core-5.7
+apt update && apt install -y python3-pip fping redis-server mysql-client-core-5.7 libmysqlclient-dev
 git clone https://github.com/locvx1234/ThuoclaoPing
 mkdir /code
 cp -r ThuoclaoPing/* /code
@@ -44,6 +44,10 @@ supervisorctl start all
 ```
 
 Nginx: 
+
+Edit file `/code/nginx/nginx.conf`
+
+Change `web` by `ip-server`
 
 ```
 apt install -y nginx
