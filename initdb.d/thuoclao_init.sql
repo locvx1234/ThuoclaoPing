@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
--- Host: localhost    Database: thuoclao
+-- Host: localhost    Database: mping
 -- ------------------------------------------------------
--- Server version	5.7.22
+-- Server version	5.7.22-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -33,7 +33,7 @@ CREATE TABLE `accounts_userprofile` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   CONSTRAINT `accounts_userprofile_user_id_92240672_fk` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `accounts_userprofile` (
 
 LOCK TABLES `accounts_userprofile` WRITE;
 /*!40000 ALTER TABLE `accounts_userprofile` DISABLE KEYS */;
-INSERT INTO `accounts_userprofile` VALUES (1,'','','',0,'profile_image/user.png',1);
+INSERT INTO `accounts_userprofile` VALUES (1,'','','',0,'profile_image/user.png',1),(4,'','','',0,'profile_image/user.png',4);
 /*!40000 ALTER TABLE `accounts_userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,7 +113,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `auth_permission` (
 
 LOCK TABLES `auth_permission` WRITE;
 /*!40000 ALTER TABLE `auth_permission` DISABLE KEYS */;
-INSERT INTO `auth_permission` VALUES (1,'Can add log entry',1,'add_logentry'),(2,'Can change log entry',1,'change_logentry'),(3,'Can delete log entry',1,'delete_logentry'),(4,'Can add permission',2,'add_permission'),(5,'Can change permission',2,'change_permission'),(6,'Can delete permission',2,'delete_permission'),(7,'Can add group',3,'add_group'),(8,'Can change group',3,'change_group'),(9,'Can delete group',3,'delete_group'),(10,'Can add user',4,'add_user'),(11,'Can change user',4,'change_user'),(12,'Can delete user',4,'delete_user'),(13,'Can add content type',5,'add_contenttype'),(14,'Can change content type',5,'change_contenttype'),(15,'Can delete content type',5,'delete_contenttype'),(16,'Can add session',6,'add_session'),(17,'Can change session',6,'change_session'),(18,'Can delete session',6,'delete_session'),(19,'Can add alert',7,'add_alert'),(20,'Can change alert',7,'change_alert'),(21,'Can delete alert',7,'delete_alert'),(22,'Can add host',8,'add_host'),(23,'Can change host',8,'change_host'),(24,'Can delete host',8,'delete_host'),(25,'Can add service',9,'add_service'),(26,'Can change service',9,'change_service'),(27,'Can delete service',9,'delete_service'),(28,'Can add user profile',10,'add_userprofile'),(29,'Can change user profile',10,'change_userprofile'),(30,'Can delete user profile',10,'delete_userprofile'),(31,'Can add completed task',11,'add_completedtask'),(32,'Can change completed task',11,'change_completedtask'),(33,'Can delete completed task',11,'delete_completedtask'),(34,'Can add task',12,'add_task'),(35,'Can change task',12,'change_task'),(36,'Can delete task',12,'delete_task');
+INSERT INTO `auth_permission` VALUES (1,'Can add log entry',1,'add_logentry'),(2,'Can change log entry',1,'change_logentry'),(3,'Can delete log entry',1,'delete_logentry'),(4,'Can add group',2,'add_group'),(5,'Can change group',2,'change_group'),(6,'Can delete group',2,'delete_group'),(7,'Can add permission',3,'add_permission'),(8,'Can change permission',3,'change_permission'),(9,'Can delete permission',3,'delete_permission'),(10,'Can add user',4,'add_user'),(11,'Can change user',4,'change_user'),(12,'Can delete user',4,'delete_user'),(13,'Can add content type',5,'add_contenttype'),(14,'Can change content type',5,'change_contenttype'),(15,'Can delete content type',5,'delete_contenttype'),(16,'Can add session',6,'add_session'),(17,'Can change session',6,'change_session'),(18,'Can delete session',6,'delete_session'),(19,'Can add host_attribute',7,'add_host_attribute'),(20,'Can change host_attribute',7,'change_host_attribute'),(21,'Can delete host_attribute',7,'delete_host_attribute'),(22,'Can add group',8,'add_group'),(23,'Can change group',8,'change_group'),(24,'Can delete group',8,'delete_group'),(25,'Can add group_attribute',9,'add_group_attribute'),(26,'Can change group_attribute',9,'change_group_attribute'),(27,'Can delete group_attribute',9,'delete_group_attribute'),(28,'Can add service',10,'add_service'),(29,'Can change service',10,'change_service'),(30,'Can delete service',10,'delete_service'),(31,'Can add host',11,'add_host'),(32,'Can change host',11,'change_host'),(33,'Can delete host',11,'delete_host'),(34,'Can add alert',12,'add_alert'),(35,'Can change alert',12,'change_alert'),(36,'Can delete alert',12,'delete_alert'),(37,'Can add user profile',13,'add_userprofile'),(38,'Can change user profile',13,'change_userprofile'),(39,'Can delete user profile',13,'delete_userprofile');
 /*!40000 ALTER TABLE `auth_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +147,7 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -156,7 +156,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$fbAHE5kVJ2Tv$E2cjdqDzQG5+5Z0j7xfqkftEVMX0PCI9zcAaWDV8TIY=','2018-06-09 01:28:18.423781',1,'admin','','','admin@hocchudong.com',1,1,'2018-06-08 17:35:50.724258');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$FW3LXXtKyvgN$VglQPoaN6vk4zgbbBWgug07PnyHjxevvHvbGV1olKqE=','2018-07-23 03:55:40.035077',1,'admin','','','',1,1,'2018-07-20 02:16:45.286976'),(4,'pbkdf2_sha256$100000$HaTMvyCrwUyK$5xPmBvudVvcpJxr88KaCxOUz4/YMnTm83VQwfeSvfP0=','2018-07-23 03:55:24.378591',0,'user2','','','',0,1,'2018-07-23 03:55:03.000000');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,104 +217,6 @@ LOCK TABLES `auth_user_user_permissions` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `background_task`
---
-
-DROP TABLE IF EXISTS `background_task`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `background_task` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `task_name` varchar(190) NOT NULL,
-  `task_params` longtext NOT NULL,
-  `task_hash` varchar(40) NOT NULL,
-  `verbose_name` varchar(255) DEFAULT NULL,
-  `priority` int(11) NOT NULL,
-  `run_at` datetime(6) NOT NULL,
-  `repeat` bigint(20) NOT NULL,
-  `repeat_until` datetime(6) DEFAULT NULL,
-  `queue` varchar(190) DEFAULT NULL,
-  `attempts` int(11) NOT NULL,
-  `failed_at` datetime(6) DEFAULT NULL,
-  `last_error` longtext NOT NULL,
-  `locked_by` varchar(64) DEFAULT NULL,
-  `locked_at` datetime(6) DEFAULT NULL,
-  `creator_object_id` int(10) unsigned DEFAULT NULL,
-  `creator_content_type_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `background_task_creator_content_type_61cc9af3_fk_django_co` (`creator_content_type_id`),
-  KEY `background_task_task_name_4562d56a` (`task_name`),
-  KEY `background_task_task_hash_d8f233bd` (`task_hash`),
-  KEY `background_task_priority_88bdbce9` (`priority`),
-  KEY `background_task_run_at_7baca3aa` (`run_at`),
-  KEY `background_task_queue_1d5f3a40` (`queue`),
-  KEY `background_task_attempts_a9ade23d` (`attempts`),
-  KEY `background_task_failed_at_b81bba14` (`failed_at`),
-  KEY `background_task_locked_by_db7779e3` (`locked_by`),
-  KEY `background_task_locked_at_0fb0f225` (`locked_at`),
-  CONSTRAINT `background_task_creator_content_type_61cc9af3_fk_django_co` FOREIGN KEY (`creator_content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `background_task`
---
-
-LOCK TABLES `background_task` WRITE;
-/*!40000 ALTER TABLE `background_task` DISABLE KEYS */;
-/*!40000 ALTER TABLE `background_task` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `background_task_completedtask`
---
-
-DROP TABLE IF EXISTS `background_task_completedtask`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `background_task_completedtask` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `task_name` varchar(190) NOT NULL,
-  `task_params` longtext NOT NULL,
-  `task_hash` varchar(40) NOT NULL,
-  `verbose_name` varchar(255) DEFAULT NULL,
-  `priority` int(11) NOT NULL,
-  `run_at` datetime(6) NOT NULL,
-  `repeat` bigint(20) NOT NULL,
-  `repeat_until` datetime(6) DEFAULT NULL,
-  `queue` varchar(190) DEFAULT NULL,
-  `attempts` int(11) NOT NULL,
-  `failed_at` datetime(6) DEFAULT NULL,
-  `last_error` longtext NOT NULL,
-  `locked_by` varchar(64) DEFAULT NULL,
-  `locked_at` datetime(6) DEFAULT NULL,
-  `creator_object_id` int(10) unsigned DEFAULT NULL,
-  `creator_content_type_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `background_task_comp_creator_content_type_21d6a741_fk_django_co` (`creator_content_type_id`),
-  KEY `background_task_completedtask_task_name_388dabc2` (`task_name`),
-  KEY `background_task_completedtask_task_hash_91187576` (`task_hash`),
-  KEY `background_task_completedtask_priority_9080692e` (`priority`),
-  KEY `background_task_completedtask_run_at_77c80f34` (`run_at`),
-  KEY `background_task_completedtask_queue_61fb0415` (`queue`),
-  KEY `background_task_completedtask_attempts_772a6783` (`attempts`),
-  KEY `background_task_completedtask_failed_at_3de56618` (`failed_at`),
-  KEY `background_task_completedtask_locked_by_edc8a213` (`locked_by`),
-  KEY `background_task_completedtask_locked_at_29c62708` (`locked_at`),
-  CONSTRAINT `background_task_comp_creator_content_type_21d6a741_fk_django_co` FOREIGN KEY (`creator_content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `background_task_completedtask`
---
-
-LOCK TABLES `background_task_completedtask` WRITE;
-/*!40000 ALTER TABLE `background_task_completedtask` DISABLE KEYS */;
-/*!40000 ALTER TABLE `background_task_completedtask` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `check_alert`
 --
 
@@ -322,16 +224,14 @@ DROP TABLE IF EXISTS `check_alert`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `check_alert` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `email_alert` varchar(100) NOT NULL,
   `telegram_id` varchar(10) NOT NULL,
   `webhook` varchar(200) NOT NULL,
   `delay_check` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `check_alert_user_id_167e5719_fk_auth_user_id` (`user_id`),
+  PRIMARY KEY (`user_id`),
   CONSTRAINT `check_alert_user_id_167e5719_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -340,8 +240,70 @@ CREATE TABLE `check_alert` (
 
 LOCK TABLES `check_alert` WRITE;
 /*!40000 ALTER TABLE `check_alert` DISABLE KEYS */;
-INSERT INTO `check_alert` VALUES (1,'','','',10,1);
 /*!40000 ALTER TABLE `check_alert` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `check_group`
+--
+
+DROP TABLE IF EXISTS `check_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `check_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_name` varchar(45) NOT NULL,
+  `description` longtext,
+  `ok` int(11) DEFAULT NULL,
+  `warning` int(11) DEFAULT NULL,
+  `critical` int(11) DEFAULT NULL,
+  `service_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `check_group_service_id_544b3777_fk_check_service_id` (`service_id`),
+  KEY `check_group_user_id_f5f190b2_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `check_group_service_id_544b3777_fk_check_service_id` FOREIGN KEY (`service_id`) REFERENCES `check_service` (`id`),
+  CONSTRAINT `check_group_user_id_f5f190b2_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `check_group`
+--
+
+LOCK TABLES `check_group` WRITE;
+/*!40000 ALTER TABLE `check_group` DISABLE KEYS */;
+INSERT INTO `check_group` VALUES (5,'Ping Default','',10,40,100,1,4),(6,'HTTP Default','',NULL,NULL,NULL,2,4),(7,'Ping Default','',10,40,100,1,1),(8,'HTTP Default','',NULL,NULL,NULL,2,1);
+/*!40000 ALTER TABLE `check_group` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `check_group_attribute`
+--
+
+DROP TABLE IF EXISTS `check_group_attribute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `check_group_attribute` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `attribute_name` varchar(45) NOT NULL,
+  `value` varchar(100) NOT NULL,
+  `type_value` int(11) DEFAULT NULL,
+  `group_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `check_group_attribute_group_id_02843754_fk_check_group_id` (`group_id`),
+  CONSTRAINT `check_group_attribute_group_id_02843754_fk_check_group_id` FOREIGN KEY (`group_id`) REFERENCES `check_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `check_group_attribute`
+--
+
+LOCK TABLES `check_group_attribute` WRITE;
+/*!40000 ALTER TABLE `check_group_attribute` DISABLE KEYS */;
+INSERT INTO `check_group_attribute` VALUES (7,'interval_ping','20',0,5),(8,'number_packet','20',0,5),(9,'interval_check','20',0,6),(10,'interval_ping','20',0,7),(11,'number_packet','20',0,7),(12,'interval_check','20',0,8);
+/*!40000 ALTER TABLE `check_group_attribute` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -354,13 +316,12 @@ DROP TABLE IF EXISTS `check_host`;
 CREATE TABLE `check_host` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hostname` varchar(45) NOT NULL,
-  `ip_address` char(39) NOT NULL,
-  `status_ping` int(11) NOT NULL,
-  `status_http` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `description` longtext,
+  `status` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `check_host_user_id_d40cd6f7_fk_auth_user_id` (`user_id`),
-  CONSTRAINT `check_host_user_id_d40cd6f7_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+  KEY `check_host_group_id_89f04e14_fk_check_group_id` (`group_id`),
+  CONSTRAINT `check_host_group_id_89f04e14_fk_check_group_id` FOREIGN KEY (`group_id`) REFERENCES `check_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -374,6 +335,34 @@ LOCK TABLES `check_host` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `check_host_attribute`
+--
+
+DROP TABLE IF EXISTS `check_host_attribute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `check_host_attribute` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `attribute_name` varchar(45) NOT NULL,
+  `value` varchar(100) NOT NULL,
+  `type_value` int(11) DEFAULT NULL,
+  `host_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `check_host_attribute_host_id_e2260eb2_fk_check_host_id` (`host_id`),
+  CONSTRAINT `check_host_attribute_host_id_e2260eb2_fk_check_host_id` FOREIGN KEY (`host_id`) REFERENCES `check_host` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `check_host_attribute`
+--
+
+LOCK TABLES `check_host_attribute` WRITE;
+/*!40000 ALTER TABLE `check_host_attribute` DISABLE KEYS */;
+/*!40000 ALTER TABLE `check_host_attribute` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `check_service`
 --
 
@@ -383,12 +372,8 @@ DROP TABLE IF EXISTS `check_service`;
 CREATE TABLE `check_service` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `service_name` varchar(45) NOT NULL,
-  `ok` int(11) DEFAULT NULL,
-  `warning` int(11) DEFAULT NULL,
-  `critical` int(11) DEFAULT NULL,
-  `interval_check` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -397,35 +382,8 @@ CREATE TABLE `check_service` (
 
 LOCK TABLES `check_service` WRITE;
 /*!40000 ALTER TABLE `check_service` DISABLE KEYS */;
+INSERT INTO `check_service` VALUES (1,'ping'),(2,'http');
 /*!40000 ALTER TABLE `check_service` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `check_service_host`
---
-
-DROP TABLE IF EXISTS `check_service_host`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `check_service_host` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `service_id` int(11) NOT NULL,
-  `host_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `check_service_host_service_id_host_id_56d890ff_uniq` (`service_id`,`host_id`),
-  KEY `check_service_host_host_id_3c83c5b1_fk_check_host_id` (`host_id`),
-  CONSTRAINT `check_service_host_host_id_3c83c5b1_fk_check_host_id` FOREIGN KEY (`host_id`) REFERENCES `check_host` (`id`),
-  CONSTRAINT `check_service_host_service_id_4233cb70_fk_check_service_id` FOREIGN KEY (`service_id`) REFERENCES `check_service` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `check_service_host`
---
-
-LOCK TABLES `check_service_host` WRITE;
-/*!40000 ALTER TABLE `check_service_host` DISABLE KEYS */;
-/*!40000 ALTER TABLE `check_service_host` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -449,7 +407,7 @@ CREATE TABLE `django_admin_log` (
   KEY `django_admin_log_user_id_c564eba6_fk` (`user_id`),
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -458,6 +416,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
+INSERT INTO `django_admin_log` VALUES (1,'2018-07-20 02:18:54.148180','1','ping',1,'[{\"added\": {}}]',10,1),(2,'2018-07-20 02:19:00.303827','2','http',1,'[{\"added\": {}}]',10,1),(3,'2018-07-23 02:02:59.351661','2','user1',1,'[{\"added\": {}}]',4,1),(4,'2018-07-23 02:03:05.685878','2','user1',2,'[]',4,1),(5,'2018-07-23 02:04:22.617266','2','user1',3,'',4,1),(6,'2018-07-23 03:01:44.040581','3','user1',1,'[{\"added\": {}}]',4,1),(7,'2018-07-23 03:01:47.183580','3','user1',2,'[]',4,1),(8,'2018-07-23 03:54:38.690064','3','user1',3,'',4,1),(9,'2018-07-23 03:55:04.369764','4','user2',1,'[{\"added\": {}}]',4,1),(10,'2018-07-23 03:55:07.947902','4','user2',2,'[]',4,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -474,7 +433,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -483,7 +442,7 @@ CREATE TABLE `django_content_type` (
 
 LOCK TABLES `django_content_type` WRITE;
 /*!40000 ALTER TABLE `django_content_type` DISABLE KEYS */;
-INSERT INTO `django_content_type` VALUES (10,'accounts','userprofile'),(1,'admin','logentry'),(3,'auth','group'),(2,'auth','permission'),(4,'auth','user'),(11,'background_task','completedtask'),(12,'background_task','task'),(7,'check','alert'),(8,'check','host'),(9,'check','service'),(5,'contenttypes','contenttype'),(6,'sessions','session');
+INSERT INTO `django_content_type` VALUES (13,'accounts','userprofile'),(1,'admin','logentry'),(2,'auth','group'),(3,'auth','permission'),(4,'auth','user'),(12,'check','alert'),(8,'check','group'),(9,'check','group_attribute'),(11,'check','host'),(7,'check','host_attribute'),(10,'check','service'),(5,'contenttypes','contenttype'),(6,'sessions','session');
 /*!40000 ALTER TABLE `django_content_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -500,7 +459,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -509,7 +468,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2018-06-08 17:34:33.263096'),(2,'auth','0001_initial','2018-06-08 17:34:41.621374'),(3,'accounts','0001_initial','2018-06-08 17:34:42.689806'),(4,'admin','0001_initial','2018-06-08 17:34:44.912387'),(5,'admin','0002_logentry_remove_auto_add','2018-06-08 17:34:44.971668'),(6,'contenttypes','0002_remove_content_type_name','2018-06-08 17:34:46.299577'),(7,'auth','0002_alter_permission_name_max_length','2018-06-08 17:34:46.433649'),(8,'auth','0003_alter_user_email_max_length','2018-06-08 17:34:46.575757'),(9,'auth','0004_alter_user_username_opts','2018-06-08 17:34:46.616969'),(10,'auth','0005_alter_user_last_login_null','2018-06-08 17:34:47.278400'),(11,'auth','0006_require_contenttypes_0002','2018-06-08 17:34:47.329406'),(12,'auth','0007_alter_validators_add_error_messages','2018-06-08 17:34:47.369055'),(13,'auth','0008_alter_user_username_max_length','2018-06-08 17:34:49.973011'),(14,'auth','0009_alter_user_last_name_max_length','2018-06-08 17:34:50.124775'),(15,'background_task','0001_initial','2018-06-08 17:34:57.159586'),(16,'background_task','0002_auto_20170927_1109','2018-06-08 17:35:02.449511'),(17,'check','0001_initial','2018-06-08 17:35:08.097663'),(18,'sessions','0001_initial','2018-06-08 17:35:08.902548');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2018-07-20 02:13:38.945292'),(2,'auth','0001_initial','2018-07-20 02:13:53.075117'),(3,'accounts','0001_initial','2018-07-20 02:13:55.218784'),(4,'admin','0001_initial','2018-07-20 02:13:58.388828'),(5,'admin','0002_logentry_remove_auto_add','2018-07-20 02:13:58.478740'),(6,'contenttypes','0002_remove_content_type_name','2018-07-20 02:14:00.438737'),(7,'auth','0002_alter_permission_name_max_length','2018-07-20 02:14:00.707310'),(8,'auth','0003_alter_user_email_max_length','2018-07-20 02:14:00.910740'),(9,'auth','0004_alter_user_username_opts','2018-07-20 02:14:01.005624'),(10,'auth','0005_alter_user_last_login_null','2018-07-20 02:14:01.826695'),(11,'auth','0006_require_contenttypes_0002','2018-07-20 02:14:01.889526'),(12,'auth','0007_alter_validators_add_error_messages','2018-07-20 02:14:01.966736'),(13,'auth','0008_alter_user_username_max_length','2018-07-20 02:14:05.553033'),(14,'auth','0009_alter_user_last_name_max_length','2018-07-20 02:14:05.809239'),(15,'check','0001_initial','2018-07-20 02:14:19.171306'),(16,'sessions','0001_initial','2018-07-20 02:14:20.297232');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -535,7 +494,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('tgxmadpbxk9sdj86vackzx9j70v2p2nc','MTBlOGMyZWYwYzM3MjMxNDMzYjk3ZThhOWNlZWMyMjUyMjM4YjU1MTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI3ZjI1NTY4MmE0NDA2YjFiZmI2ZjJiZGM3OTE5YjU0N2M4ZGQ2ZDVmIn0=','2018-06-23 01:28:18.498640');
+INSERT INTO `django_session` VALUES ('cqnjf0gacl7rr88rkg9p62nsq7bdqwz7','NzIyYTE0NzQwM2JjYjA4MmJmMWIzNDNkNmEwM2M1NGJmYmIyNWJlNzp7Il9hdXRoX3VzZXJfaGFzaCI6ImQ4N2ViM2JlNTI2ODFjMDdiNzc5Y2MxMGNhZTBiM2I4NjUwMDE2ZTMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=','2018-08-06 03:55:40.438028'),('cz4hewpffek72vl3dfdvwfzqo8ox9euv','YWUwYWZkMDIxMTI5MjIxYjU4ZmM5N2E1NjkyNTJjNTM5NmI0YWZmNjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkODdlYjNiZTUyNjgxYzA3Yjc3OWNjMTBjYWUwYjNiODY1MDAxNmUzIn0=','2018-08-05 04:20:37.335105'),('o0c6s4jf0jsefrfuwzpfdcbkyafb7i09','YWUwYWZkMDIxMTI5MjIxYjU4ZmM5N2E1NjkyNTJjNTM5NmI0YWZmNjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkODdlYjNiZTUyNjgxYzA3Yjc3OWNjMTBjYWUwYjNiODY1MDAxNmUzIn0=','2018-08-06 02:10:56.192988'),('vp4eopj2p3qbcgnxx3k7mwhmr8pj3c8y','MmQ1ZDkyOGZlYTY5MzFmYzZkNTYyNTJiNTE1ZmNiMTdlNjA0MzQ1Yzp7Il9hdXRoX3VzZXJfaGFzaCI6ImQ4N2ViM2JlNTI2ODFjMDdiNzc5Y2MxMGNhZTBiM2I4NjUwMDE2ZTMiLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIn0=','2018-08-03 02:17:14.629623');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -548,4 +507,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-09  1:30:47
+-- Dump completed on 2018-07-23 11:00:47

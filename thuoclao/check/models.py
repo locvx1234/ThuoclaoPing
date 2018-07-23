@@ -2,6 +2,9 @@ import smtplib
 import requests
 import json
 
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from urllib import request
 from django.db import models
 from django.contrib.auth.models import User
@@ -105,3 +108,25 @@ class Host_attribute(models.Model):
 
     def __str__(self):
         return str(self.attribute_name) + " - " + str(self.value)
+
+
+# UserProfile model will be automatically created/updated when we create/update User instances.
+@receiver(post_save, sender=User)
+def create_group_profile(sender, instance, created, **kwargs):
+    if created:
+        ping = Service.objects.get(service_name="ping")
+        http = Service.objects.get(service_name="http")
+        group_ping = Group.objects.create(user=instance, service=ping, group_name="Ping Default",
+                                          description="", ok=10, warning=40, critical=100)
+        group_http = Group.objects.create(user=instance, service=http, group_name="HTTP Default",
+                                          description="")
+
+        Group_attribute.objects.create(group=group_ping, attribute_name='interval_ping',
+                                       value=20, type_value=0)
+
+        Group_attribute.objects.create(group=group_ping, attribute_name='number_packet',
+                                       value=20, type_value=0)
+
+        Group_attribute.objects.create(group=group_http, attribute_name='interval_check',
+                                       value=20, type_value=0)
+

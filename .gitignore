@@ -2,6 +2,7 @@
 **/__pycache__/
 **/migrations/
 .idea/*
+.egg-info/
 .tox/
 .DS_Store
 .vscode

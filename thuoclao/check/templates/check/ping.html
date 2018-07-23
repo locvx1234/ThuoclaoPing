@@ -116,7 +116,7 @@
                                                         <div class="form-group">
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Group</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select name="group" class="form-control">
+                                                                <select name="group" class="form-control" required="required">
                                                                     {% for group in groups %}
                                                                         <option value={{ group.id }}>{{ group.group_name }}</option>
                                                                     {% endfor %}
@@ -257,7 +257,7 @@
                                                             <label  class="control-label col-md-3 col-sm-3 col-xs-12">Interval Ping</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                                 <input type="number" name="interval_ping" value={{ group.interval_ping }} required="required" class="form-control col-md-7 col-xs-12">
-                                                                <small id="itimeHelp" class="form-text text-muted">The time to execute ping again with hosts</small>
+                                                                <small id="itimeHelp" class="form-text text-muted">The time to execute ping again with hosts. Unit: sencond</small>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -334,7 +334,7 @@
             <div class="form-group">
                 <label  class="control-label col-md-3 col-sm-3 col-xs-12">Group</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select name="group" class="form-control">
+                    <select name="group" class="form-control" required="required">
                         {% for group in groups %}
                             <option value={{ group.id }}>{{ group.group_name }}</option>
                         {% endfor %}
@@ -362,7 +362,7 @@
 <div id="myGroupModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
-        <!-- Modal content - add host -->
+        <!-- Modal content - add group -->
         <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -445,7 +445,10 @@
         $('#datatable1').DataTable();
     } );
     $(document).ready(function() {
-        $('#datatable2').DataTable();
+        $('#datatable2').DataTable({
+            "searching": false,
+            "paging": false,
+        });
     } );    
   </script>
   <!-- <script src="{% static '/build/js/ping.js' %}"></script> -->
