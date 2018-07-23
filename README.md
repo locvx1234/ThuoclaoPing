@@ -38,7 +38,7 @@ Supervisor:
 
 ```
 apt install -y supervisor
-cp /code/supervisor/supervisord.conf /etc/supervisor/conf.d/ro
+cp /code/supervisor/supervisord.conf /etc/supervisor/conf.d/
 supervisorctl reload
 supervisorctl start all
 ```
@@ -64,8 +64,9 @@ $ ./rebuild_docker.sh
 
 Then, access `http://ip-docker-host`
 
-User : admin
-Password : strongpass@@
+User : `admin`
+
+Password : `strongpass@@`
 
 Bejoy !
 

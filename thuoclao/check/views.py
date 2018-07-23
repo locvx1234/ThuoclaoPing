@@ -169,6 +169,8 @@ def host(request, service_name):
                                                 value=ip_address, type_value=4)
             if service_name == 'http':
                 url = request.POST.get('url')
+                if not url.endswith("/"):
+                    url = url + "/"
                 host_attr_data = Host_attribute(host=host_data, attribute_name="url",
                                                 value=url, type_value=5)
             host_attr_data.save()
@@ -243,6 +245,8 @@ def edit_host(request, service_name, host_id):
             host_attr_data.value = ip_address
         if service_name == 'http':
             url = request.POST.get('url')
+            if not url.endswith("/"):
+                url = url + "/"
             host_attr_data = Host_attribute.objects.get(host=host_query, attribute_name="url")
             host_attr_data.value = url
         host_query.save()
