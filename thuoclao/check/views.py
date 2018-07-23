@@ -18,6 +18,7 @@ from rest_framework import status
 from .models import Host, Service, Alert, Group, Host_attribute, Group_attribute
 from .forms import AlertForm
 from lib.display_metric import Display
+from lib.display_metric import Info
 from .serializers import GroupSerializer, GroupAttributeSerializer, HostSerializer, HostAttributeSerializer
 from thuoclao import settings
 
@@ -35,6 +36,11 @@ def index(request):
     else:
         return HttpResponseRedirect('/accounts/login')
 
+def information(request):
+    if request.user.is_authenticated:
+        return render(request, 'check/information.html')
+    else:
+        return HttpResponseRedirect('/accounts/login')
 
 def help(request):
     context = {"mtiket_server": settings.MTICKET_SERVER}
@@ -94,6 +100,16 @@ def total_parameter(request):
         print(json_data)
         return HttpResponse(json_data, content_type="application/json")
 
+def total_info_influxdb(request):
+    if request.is_ajax():
+        info = Info()
+        total_measuere = info.series_total()
+        total_series = info.series_total()
+        avg_query = info.avg_query()
+        context = {'total_measuere': total_measuere, 'total_series': total_series, 'avg_query': avg_query}
+        json_data = json.dumps(context)
+        print(json_data)
+        return HttpResponse(json_data, content_type="application/json")
 
 def view_html(request):
     context = {}

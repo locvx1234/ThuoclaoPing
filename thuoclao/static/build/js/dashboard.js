@@ -137,6 +137,22 @@ $(window).load(function(){
             setTimeout(total_update, 10000);  // function refers to itself
         });
     })();
+
+    (function info_influx() {
+        $.ajax({
+            url: 'ajax/info_influx',
+            success: function(data_info) {
+                $('#total_measuere').html(data_info['total_measuere']);
+                $('#total_series').html(data_info['total_series']);
+                $('#avg_query').html(data_info['avg_query']);
+            },
+            failure: function(data_info) {
+                console.log('Got an error total parameter');
+            }
+        }).then(function() {           // on completion, restart
+            setTimeout(info_influx, 10000);  // function refers to itself
+        });
+    })();
 });
 
 filterSelection("all")
