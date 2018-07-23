@@ -178,10 +178,11 @@ def host(request, service_name):
                 ok = request.POST.get('ok')
                 warning = request.POST.get('warning')
                 critical = request.POST.get('critical')
+                group_data = Group(user=user, service=service, group_name=group_name, description=description,
+                                   ok=ok, warning=warning, critical=critical)
             if service_name == 'http':
-                pass
-            group_data = Group(user=user, service=service, group_name=group_name, description=description,
-                               ok=ok, warning=warning, critical=critical)
+                group_data = Group(user=user, service=service, group_name=group_name, description=description)
+            
             group_data.save()
 
             if service_name == 'ping':

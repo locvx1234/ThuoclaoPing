@@ -12,7 +12,7 @@ pip9.0.2
 Install
 -------
 
-Clone source code and install dependences :
+Clone source code and install dependences:
 
 ```
 apt update && apt install -y fping redis-server
@@ -27,9 +27,13 @@ Mysql:
 
 Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
 
-Import database 
+Then import database
 
+```
+mysql -h <mysql-server> -u<username> -p thuoclao < initdb.d/thuoclao_init.sql
+```
 
+Influx DB: 
 
 
 Supervisor:
