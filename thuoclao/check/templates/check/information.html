@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base_site.html" %}
+
+{% block title %} Information {% endblock title %}
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{% static '/build/css/dashboard.css' %}">
+  {{ block.super }}
+{% endblock stylesheets %}
+{% load static %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="row tile_count">
+      <div class="col-md-4 col-sm-6 col-xs-8 tile_stats_count">
+        <span class="count_top"><i class="fa fa-briefcase"></i> Measurement Count</span>
+        <div class="count green" id="total_measuere"></div>
+      </div>
+      <div class="col-md-4 col-sm-6 col-xs-8 tile_stats_count">
+        <span class="count_top"><i class="fa fa-briefcase"></i> Series Count</span>
+        <div class="count blue" id="total_series"></div>
+      </div>
+      <div class="col-md-4 col-sm-6 col-xs-8 tile_stats_count">
+        <span class="count_top"><i class="fa fa-briefcase"></i> Average Query Duration</span>
+        <div class="count red" id ="avg_query"></div>
+      </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super}}
+
+  <script src="{% static '/build/js/dashboard.js' %}"></script>
+  <script src="{% static '/vendors/canvasjs-non-commercial-2.0/canvasjs.min.js' %}"></script>
+{% endblock javascripts %}
