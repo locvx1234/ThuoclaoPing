@@ -6,37 +6,39 @@ Environment
 -----------
 python3.6
 
-pip9.0.2
-
 
 Install
 -------
 
-Clone source code and install dependences :
+Clone source code and install dependences:
 
 ```
-apt update && apt install -y fping redis-server
+apt update && apt install -y python3-pip fping redis-server mysql-client-core-5.7
 git clone https://github.com/locvx1234/ThuoclaoPing
 mkdir /code
 cp -r ThuoclaoPing/* /code
 cd /code
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Mysql:
 
 Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
 
-Import database 
+Then import database
 
+```
+mysql -h <mysql-server> -u<username> -p thuoclao < initdb.d/thuoclao_init.sql
+```
 
+Influx DB: 
 
 
 Supervisor:
 
 ```
 apt install -y supervisor
-cp /code/supervisor/supervisord.conf /etc/supervisor/conf.d/
+cp /code/supervisor/supervisord.conf /etc/supervisor/conf.d/ro
 supervisorctl reload
 supervisorctl start all
 ```
