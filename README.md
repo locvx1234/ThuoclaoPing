@@ -32,7 +32,8 @@ Create database `thuoclao`
 
 ```sh
 mysql -u root -p
->CREATE DATABASE thuoclao
+> CREATE DATABASE thuoclao;
+> exit
 ```
 
 Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
@@ -68,9 +69,9 @@ Create DB user command `influx`
 
 ```sh
 influx
-CREATE DATABASE thuoclao
-CREATE USER "thuoclao" WITH PASSWORD 'thuoclao' WITH ALL PRIVILEGES
-exit 
+> CREATE DATABASE thuoclao
+> CREATE USER "thuoclao" WITH PASSWORD 'thuoclao' WITH ALL PRIVILEGES
+> exit 
 ```
 
 Turn on mode password
