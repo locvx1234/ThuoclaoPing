@@ -24,7 +24,7 @@ $(window).load(function(){
                                 suffix: " ms"
                             },
                             data: [{
-                                name: "Max",
+                                name: "Max: {y} ms",
                                 type: "spline",
                                 markerSize: 0,
                                 xValueType: "dateTime",
@@ -32,7 +32,7 @@ $(window).load(function(){
                                 dataPoints: dps_max
                             },
                             {
-                                name: "Min",
+                                name: "Min: {y} ms",
                                 type: "spline",
                                 markerSize: 0,
                                 xValueType: "dateTime",
@@ -81,7 +81,7 @@ $(window).load(function(){
                                 suffix: " ms"
                             },
                             data: [{
-                                name: "Response",
+                                name: "Response: {y} ms",
                                 type: "splineArea",
                                 color: "rgba(54,158,173,.7)",
                                 markerSize: 5,

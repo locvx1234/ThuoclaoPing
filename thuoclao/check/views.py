@@ -136,8 +136,8 @@ def ram_info(request):
     ram_info = psutil.virtual_memory()
     ram_used = (ram_info.used/ram_info.total)*100
     ram_free = 100 - ram_used
-    context = {'ram_used': '{}'.format(round(ram_free, 2)),
-               'ram_free': '{}'.format(round(ram_used, 2))}
+    context = {'ram_used': '{}'.format(round(ram_used, 2)),
+               'ram_free': '{}'.format(round(ram_free, 2))}
     json_data = json.dumps(context)
     return HttpResponse(json_data, content_type="application/json")
 
