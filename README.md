@@ -33,6 +33,46 @@ mysql -h <mysql-server> -u<username> -p thuoclao < initdb.d/thuoclao_init.sql
 
 Influx DB: 
 
+Add repo Influxdb
+
+```sh
+vi /etc/apt/sources.list.d/influxdb.list
+deb https://repos.influxdata.com/ubuntu bionic stable
+```
+Add key
+
+```
+curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+```
+Install InfluxDB
+
+```sh
+apt-get update -y
+apt-get install influxdb -y
+systemctl start influxdb
+```
+
+Create DB user command `influx`
+
+```sh
+influx
+CREATE DATABASE thuoclao
+CREATE USER "thuoclao" WITH PASSWORD 'thuoclao' WITH ALL PRIVILEGES
+exit 
+```
+
+Turn on mode password
+
+```
+sed -i 's/# auth-enabled = false/auth-enabled = true/g'  /etc/influxdb/influxdb.conf
+```
+
+Restart Influxdb
+
+```
+systemctl restart influxdb
+```
+
 
 Supervisor:
 
