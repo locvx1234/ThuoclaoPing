@@ -110,20 +110,44 @@ class Info(utils.Auth):
     def series_total(self):
         series_total = self.client_info.query('SELECT mean("numSeries")'
                                               ' FROM \"database\"'
-                                              ' WHERE time > now() - 24h')
+                                              ' WHERE time > now() - 24h', epoch='ms')
         results_series_total = list(series_total.get_points(measurement='database'))
         return round(results_series_total[0]['mean'], 0)
 
     def measure_total(self):
         measure_total = self.client_info.query('SELECT mean("numMeasurements")'
                                                ' FROM \"database\"'
-                                               ' WHERE time > now() - 24h')
+                                               ' WHERE time > now() - 24h', epoch='ms')
         results_measure_total = list(measure_total.get_points(measurement='database'))
         return round(results_measure_total[0]['mean'], 0)
 
     def avg_query(self):
-        avg_query = self.client_info.query('SELECT mean("queryDurationNs")'
-                                           ' FROM  "monitor"."queryExecutor"'
-                                           ' WHERE time > now() - 1m')
+        avg_query = self.client_info.query('SELECT mean("queryDurationNs") '
+                                           'FROM  "monitor"."queryExecutor" '
+                                           'GROUP BY time(1d)', epoch='ms')
         results_avg_query = list(avg_query.get_points(measurement='queryExecutor'))
         return round(results_avg_query[0]['mean']/1000000000, 2)
+
+    def http_queries(self):
+        http_queries = self.client_info.query('SELECT non_negative_derivative'
+                                              '(last("queryReq"), 1s)'
+                                              ' FROM "httpd" WHERE time > now() - 6h'
+                                              ' GROUP BY time(1m)', epoch='ms')
+        results_http_queries = list(http_queries.get_points(measurement='httpd'))
+        return results_http_queries
+
+    def http_client_errors(self):
+        http_client_errors = self.client_info.query('SELECT non_negative_derivative'
+                                                    '(last("clientError"), 1s)'
+                                                    ' FROM "httpd" WHERE time > now() - 6h'
+                                                    ' GROUP BY time(1m)', epoch='ms')
+        results_http_client_errors = list(http_client_errors.get_points(measurement='httpd'))
+        return results_http_client_errors
+
+    def http_server_errors(self):
+        http_server_errors = self.client_info.query('SELECT non_negative_derivative'
+                                                    '(last("serverError"), 1s)'
+                                                    ' FROM "httpd" WHERE time > now() - 6h'
+                                                    ' GROUP BY time(1m)', epoch='ms')
+        results_http_server_errors = list(http_server_errors.get_points(measurement='httpd'))
+        return results_http_server_errors

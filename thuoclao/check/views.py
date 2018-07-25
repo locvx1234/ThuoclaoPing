@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import psutil
 
 from django.shortcuts import render
 from django.template import loader
@@ -61,11 +62,13 @@ def help(request):
         topic = request.POST['topic']
         file_attach = request.POST['attach']
         print(file_attach)
-
+        files = {'attach': open('/home/locvu/Desktop/pele.jpg', 'rb')}
         data = {'title': title, 'topic': topic, 'content': content,
                 'auth_token': settings.MTICKET_TOKEN}
         response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
+        print(files)
         print(response)
+        # print(response.text)
         context["response"] = response
         return HttpResponseRedirect('/help')
     return render(request, 'help.html', context)
@@ -73,17 +76,77 @@ def help(request):
 
 def get_data(request, pk_host, service_name, query_time):
     host = Host.objects.get(id=pk_host)
-    print(host)
+    # print(host)
     display = Display(host.group.group_name, host.hostname, host.group.user.username)
     if service_name == 'ping':
         ip_addr = host.host_attribute_set.get(attribute_name='ip_address').value
         res = display.select_ping(ip_addr, query_time)
-        # pprint(res)
+        print(res)
     if service_name == 'http':
         url = host.host_attribute_set.get(attribute_name='url').value
         res = display.select_http(url, query_time)
         # pprint(res)
     json_data = json.dumps(res)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def get_http_queries(request):
+    # print("minhkma")
+    info = Info()
+    http_queries = info.http_queries()
+    json_data = json.dumps(http_queries)
+    # print(json_data)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def server_errors(request):
+    # print("minhkma")
+    info = Info()
+    server_errors = info.http_server_errors()
+    json_data = json.dumps(server_errors)
+    # print(json_data)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def client_errors(request):
+    # print("minhkma")
+    info = Info()
+    client_errors = info.http_client_errors()
+    json_data = json.dumps(client_errors)
+    # print(json_data)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def cpu_util(request):
+    cpu_info = psutil.cpu_times_percent()
+    load_info = os.getloadavg()
+    context = {'cpu_user': '{}%'.format(cpu_info.user),
+               'cpu_nice': '{}%'.format(cpu_info.user),
+               'cpu_system': '{}%'.format(cpu_info.system),
+               'cpu_iowait': '{}%'.format(cpu_info.iowait),
+               'cpu_idle': '{}%'.format(cpu_info.idle),
+               'cpu_steal': '{}%'.format(cpu_info.steal),
+               'load1m': load_info[0], 'load5m': load_info[1],
+               'load15m': load_info[2]}
+    json_data = json.dumps(context)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def ram_info(request):
+    ram_info = psutil.virtual_memory()
+    ram_used = (ram_info.used/ram_info.total)*100
+    ram_free = 100 - ram_used
+    context = {'ram_used': '{}'.format(round(ram_free, 2)),
+               'ram_free': '{}'.format(round(ram_used, 2))}
+    json_data = json.dumps(context)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def disk_info(request):
+    disk_used = psutil.disk_usage('/')[3]
+    context = {'disk_free': '{}'.format(round(100 - disk_used, 1)),
+               'disk_used': '{}'.format(round(disk_used, 1))}
+    json_data = json.dumps(context)
     return HttpResponse(json_data, content_type="application/json")
 
 
@@ -104,10 +167,12 @@ def total_parameter(request):
 def total_info_influxdb(request):
     if request.is_ajax():
         info = Info()
-        total_measuere = info.series_total()
+        total_measuere = info.measure_total()
         total_series = info.series_total()
         avg_query = info.avg_query()
-        context = {'total_measuere': total_measuere, 'total_series': total_series, 'avg_query': avg_query}
+        context = {'total_measuere': total_measuere,
+                   'total_series': total_series,
+                   'avg_query': '{}s'.format(avg_query)}
         json_data = json.dumps(context)
         print(json_data)
         return HttpResponse(json_data, content_type="application/json")
@@ -169,8 +234,6 @@ def host(request, service_name):
                                                 value=ip_address, type_value=4)
             if service_name == 'http':
                 url = request.POST.get('url')
-                if not url.endswith("/"):
-                    url = url + "/"
                 host_attr_data = Host_attribute(host=host_data, attribute_name="url",
                                                 value=url, type_value=5)
             host_attr_data.save()
@@ -186,7 +249,7 @@ def host(request, service_name):
                                    ok=ok, warning=warning, critical=critical)
             if service_name == 'http':
                 group_data = Group(user=user, service=service, group_name=group_name, description=description)
-
+            
             group_data.save()
 
             if service_name == 'ping':
@@ -245,8 +308,6 @@ def edit_host(request, service_name, host_id):
             host_attr_data.value = ip_address
         if service_name == 'http':
             url = request.POST.get('url')
-            if not url.endswith("/"):
-                url = url + "/"
             host_attr_data = Host_attribute.objects.get(host=host_query, attribute_name="url")
             host_attr_data.value = url
         host_query.save()
