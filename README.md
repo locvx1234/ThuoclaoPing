@@ -13,7 +13,7 @@ Install
 Clone source code and install dependences:
 
 ```
-apt update && apt install -y python3-pip fping redis-server mysql-client-core-5.7 libmysqlclient-dev
+apt update && apt install -y python3-pip fping redis-server mysql-server-5.7 mysql-client-core-5.7 libmysqlclient-dev
 git clone https://github.com/locvx1234/ThuoclaoPing
 mkdir /code
 cp -r ThuoclaoPing/* /code
@@ -22,6 +22,18 @@ pip3 install -r requirements.txt
 ```
 
 Mysql:
+
+Start mysql-server
+
+```
+systemctl restart mysql-server
+```
+Create database `thuoclao`
+
+```sh
+mysql -u root -p
+>CREATE DATABASE thuoclao
+```
 
 Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
 
@@ -73,6 +85,7 @@ Restart Influxdb
 systemctl restart influxdb
 ```
 
+Then edit DATABASE_INFLUX value in `/code/thuoclao/thuoclao/settings.py` file
 
 Supervisor:
 
