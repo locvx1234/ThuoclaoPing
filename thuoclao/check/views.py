@@ -40,7 +40,15 @@ def index(request):
 
 def information(request):
     if request.user.is_authenticated:
-        return render(request, 'check/information.html')
+        interfaces = []
+        network_stats = psutil.net_io_counters(pernic=True)
+        for name in network_stats:
+            interfaces.append({'name_interface': name,
+                               'bytes_sent': network_stats[str(name)].bytes_sent,
+                               'bytes_recv': network_stats[str(name)].bytes_recv})
+        context = {'interfaces': interfaces}
+        print(context)
+        return render(request, 'check/information.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
 
@@ -148,6 +156,24 @@ def disk_info(request):
                'disk_used': '{}'.format(round(disk_used, 1))}
     json_data = json.dumps(context)
     return HttpResponse(json_data, content_type="application/json")
+
+
+def network_info(request, interface):
+    # interfaces = []
+    print('minhkma')
+    network_stats = psutil.net_io_counters(pernic=True)[interface]
+    context = {'name_interface': interface,
+               'bytes_sent': network_stats.bytes_sent,
+               'bytes_recv': network_stats.bytes_recv}
+    json_data = json.dumps(context)
+    return HttpResponse(json_data, content_type="application/json")
+    # for name in network_stats:
+    #     interfaces.append({'name_interface': name,
+    #                        'packets_sent': network_stats[name].packets_sent,
+    #                        'bytes_recv': network_stats[name].packets_sent})
+    # context = interfaces
+    # json_data = json.dumps(context)
+    # return HttpResponse(json_data, content_type="application/json")
 
 
 def total_parameter(request):

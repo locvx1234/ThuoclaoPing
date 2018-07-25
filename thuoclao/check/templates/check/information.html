@@ -33,96 +33,132 @@
             <div class="col-md-12">
                 <div class="x_panel">
                     <div class="x_title">
-                    <h2>CPU information</h2>
+                    <h2>Network</h2>
                     <div class="clearfix"></div>
                 </div>
                     <div class="x_content">
                         <table id="datatable2" class="table table-striped" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
-                                    <th>CPU</th>
-                                    <th>Value</th>
+                                    <th>Interface</th>
+                                    <th>byte_sent</th>
+                                    <th>byte_recv</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                              {% for interface in interfaces %}
+                                <tr class="interface_row" id="interface-{{interface.name_interface }}">
                                     <td>
-                                        {{ 'cpu user' }}
+                                        {{interface.name_interface }}
                                     </td>
                                     <td>
-                                        <div id="cpu_user"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'cpu nice' }}
+                                        {{interface.bytes_sent }}
                                     </td>
                                     <td>
-                                        <div id="cpu_nice"></div>
+                                        {{interface.bytes_recv }}
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'cpu system' }}
-                                    </td>
-                                    <td>
-                                        <div id="cpu_system"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'cpu iowait' }}
-                                    </td>
-                                    <td>
-                                        <div id="cpu_iowait"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'cpu idle' }}
-                                    </td>
-                                    <td>
-                                        <div id="cpu_idle"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'cpu steal' }}
-                                    </td>
-                                    <td>
-                                        <div id="cpu_steal"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'load average 1m' }}
-                                    </td>
-                                    <td>
-                                        <div id="load1m"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'load average 5m' }}
-                                    </td>
-                                    <td>
-                                        <div id="load5m"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ 'load average 15m' }}
-                                    </td>
-                                    <td>
-                                        <div id="load15m"></div>
-                                    </td>
-                                </tr>
+                              {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+              <div class="x_panel">
+                  <div class="x_title">
+                  <h2>CPU information</h2>
+                  <div class="clearfix"></div>
+              </div>
+                  <div class="x_content">
+                      <table id="datatable2" class="table table-striped" cellspacing="0" width="100%">
+                          <thead>
+                              <tr>
+                                  <th>CPU</th>
+                                  <th>Value</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu user' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_user"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu nice' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_nice"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu system' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_system"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu iowait' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_iowait"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu idle' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_idle"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'cpu steal' }}
+                                  </td>
+                                  <td>
+                                      <div id="cpu_steal"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'load average 1m' }}
+                                  </td>
+                                  <td>
+                                      <div id="load1m"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'load average 5m' }}
+                                  </td>
+                                  <td>
+                                      <div id="load5m"></div>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                      {{ 'load average 15m' }}
+                                  </td>
+                                  <td>
+                                      <div id="load15m"></div>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
     <div class="x_content">
         <div id="chartContainer1" class="graph_http_queries" style="height: 300px; width: 100%;"></div>
     </div>

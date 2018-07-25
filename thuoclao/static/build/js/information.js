@@ -1,4 +1,25 @@
 $(window).load(function() {
+    $("tr.interface_row").each(function(){
+        var id_row = $(this).attr("id");
+        var interface = id_row.split('-')[1];
+        console.log(id_row);
+        (function network() {   
+            $.ajax({
+                url: '/ajax/network/' + interface,
+                success: function(data_info) {
+                    console.log(data_info);
+                    $('#interface-' + interface + ' td:nth-child(1)').html(data_info["name_interface"]);
+                    $('#interface-' + interface + ' td:nth-child(2)').html(data_info["bytes_sent"]);
+                    $('#interface-' + interface + ' td:nth-child(3)').html(data_info["bytes_recv"]);
+                },
+                failure: function(data_info) {
+                    console.log('Got an error total parameter');
+                }
+            }).then(function() {           // on completion, restart
+                setTimeout(network, 10000);  // function refers to itself
+            });
+        })();
+    });
 
     (function ram_info() {
         $.ajax({
@@ -221,61 +242,61 @@ $(window).load(function() {
         })();
 
     (function client_errors() {
-            $.ajax({
-                url: '/ajax/client_errors',
-                dataType: 'json',
-                success: function (data) {
-                    // console.log(data);
-                    var dps = [];
-                    var chart = new CanvasJS.Chart("chartContainer3", {
-                        exportEnabled: true,
-                        title: {
-                            text: "Client errors"
-                        },
-                        axisY: {
-                            includeZero: false,
-                            suffix: " ops"
-                        },
-                        data: [{
-                            name: "Client_errors: {y} ops",
-                            type: "spline",
-                            markerSize: 0,
-                            xValueType: "dateTime",
-                            showInLegend: true,
-                            dataPoints: dps
-                        }]
+        $.ajax({
+            url: '/ajax/client_errors',
+            dataType: 'json',
+            success: function (data) {
+                // console.log(data);
+                var dps = [];
+                var chart = new CanvasJS.Chart("chartContainer3", {
+                    exportEnabled: true,
+                    title: {
+                        text: "Client errors"
+                    },
+                    axisY: {
+                        includeZero: false,
+                        suffix: " ops"
+                    },
+                    data: [{
+                        name: "Client_errors: {y} ops",
+                        type: "spline",
+                        markerSize: 0,
+                        xValueType: "dateTime",
+                        showInLegend: true,
+                        dataPoints: dps
+                    }]
 
-                    });
-                    var xVal = data[0]['time'];
-                    var yVal = data[0]['non_negative_derivative'];
-                    console.log(yVal);
-                    var dataLength = data.length;
-                    var updateChart = function (count) {
-                        count = count || 1;
-                        // count is number of times loop runs to generate random dataPoints.
-                        for (var j = 0; j < count; j++) {
-                            yVal = data[j]['non_negative_derivative'];
-                            xVal = data[j]['time'];
-                            // console.log(xVal);
-                            dps.push({
-                                x: xVal,
-                                y: yVal
-                            });
-                        }
-                        if (dps.length > dataLength) {
-                            dps.shift();
-                        }
-                        chart.render();
-                    };
-                    updateChart(dataLength);
-                },
-                failure: function (data) {
-                    alert('Got an error dude');
-                }
-            }).then(function () {           // on completion, restart
-                setTimeout(client_errors, 10000);  // function refers to itself
-            });
-        })();
+                });
+                var xVal = data[0]['time'];
+                var yVal = data[0]['non_negative_derivative'];
+                console.log(yVal);
+                var dataLength = data.length;
+                var updateChart = function (count) {
+                    count = count || 1;
+                    // count is number of times loop runs to generate random dataPoints.
+                    for (var j = 0; j < count; j++) {
+                        yVal = data[j]['non_negative_derivative'];
+                        xVal = data[j]['time'];
+                        // console.log(xVal);
+                        dps.push({
+                            x: xVal,
+                            y: yVal
+                        });
+                    }
+                    if (dps.length > dataLength) {
+                        dps.shift();
+                    }
+                    chart.render();
+                };
+                updateChart(dataLength);
+            },
+            failure: function (data) {
+                alert('Got an error dude');
+            }
+        }).then(function () {           // on completion, restart
+            setTimeout(client_errors, 10000);  // function refers to itself
+        });
+    })();
 
     (function info_influx() {
         $.ajax({

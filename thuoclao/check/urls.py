@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^ajax/client_errors/$', views.client_errors, name='client_errors'),
     url(r'^ajax/cpu_util/$', views.cpu_util, name='cpu_util'),
     url(r'^ajax/ram/$', views.ram_info, name='ram_info'),
+    url(r'^ajax/network/(?P<interface>[-\w]+)/$', views.network_info, name='network_info'),
     url(r'^ajax/disk/$', views.disk_info, name='disk_info'),
     url(r'^alert$', views.alert, name='alert'),
     url(r'^information$', views.information, name='information'),
