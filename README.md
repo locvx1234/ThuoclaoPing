@@ -5,7 +5,13 @@
 Environment 
 -----------
 python3.6
-
+```sh
+apt-get install software-properties-common python-software-properties
+add-apt-repository ppa:jonathonf/python-3.6
+Press [ENTER] to continue or ctrl-c to cancel adding it
+apt-get update
+apt-get install python3.6
+```
 
 Install
 -------
@@ -20,13 +26,30 @@ cp -r ThuoclaoPing/* /code
 cd /code
 pip3 install -r requirements.txt
 ```
+If you see a error log:
+
+```sh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/lib/python2.7/locale.py", line 531, in setlocale
+    return _setlocale(category, locale)
+locale.Error: unsupported locale setting
+```
+
+then you run:
+
+```sh
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+sudo dpkg-reconfigure locales
+```
 
 Mysql:
 
 Start mysql-server
 
 ```
-systemctl restart mysql-server
+systemctl restart mysql.service
 ```
 Create database `thuoclao`
 
@@ -41,7 +64,7 @@ Edit `DATABASES` value from line 90 to line 94 and comment line 86 to 89 in the 
 Then import database
 
 ```
-mysql -h <mysql-server> -u<username> -p thuoclao < docker-entrypoint-initdb.d/thuoclao_init.sql
+mysql -u<username> -p thuoclao < docker-entrypoint-initdb.d/thuoclao_init.sql
 ```
 
 Influx DB: 
@@ -63,6 +86,7 @@ Install InfluxDB
 apt-get update -y
 apt-get install influxdb -y
 systemctl start influxdb
+systemctl enable influxdb
 ```
 
 Create DB user command `influx`
@@ -109,6 +133,7 @@ ufw allow 'Nginx HTTP'
 cp /code/nginx/nginx.conf /etc/nginx/conf.d/
 sed -i 's/include \/etc\/nginx\/sites-enabled/#include \/etc\/nginx\/sites-enabled/g' /etc/nginx/nginx.conf
 systemctl restart nginx
+systemctl enable nginx
 ```
 
 Docker
