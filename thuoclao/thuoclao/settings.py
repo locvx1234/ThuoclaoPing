@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
 import os
-import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +28,7 @@ SECRET_KEY = '_ttj5t!3fo03!k(w!o85ml0wk5$eb$%#!cg(^67x3h54&!vqw2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -43,7 +42,8 @@ INSTALLED_APPS = [
     'check',
     'accounts',
     'lib',
-    'background_task'
+    'rest_framework',
+    'thuoclao',
 ]
 
 MIDDLEWARE = [
@@ -83,13 +83,15 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-	    # 'read_default_file': '/etc/mysql/my.cnf',
-        },
-	'NAME': 'thuoclao',
-	'USER': 'root',
-	'PASSWORD': '123456',
-	'HOST': 'db',
+        'NAME': 'thuoclao',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': 'db',
+        # 'NAME': 'thuoclao',
+        # 'USER': 'root',
+        # 'PASSWORD': '123456',
+        # 'HOST': 'localhost',
+        # 'PORT': '3306'
     }
 }
 
@@ -142,15 +144,35 @@ LOGIN_REDIRECT_URL = 'index'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
 
-FROM_EMAIL = 'poisonous1205@gmail.com'
-PASSWD_MAIL = 'minhnguyen'
+# Email send notification
+FROM_EMAIL = 'thuoclaoping@gmail.com'
+PASSWD_MAIL = 'thu0c_la0'
 SMTP_SERVER = 'smtp.gmail.com:587'
 
-TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
+# Telegram token
+TOKEN = '654284357:AAHqXzYGxpmdqKcWzm7WRcFVCia0jL9Szpg'
 
+# Influx config
 INFLUXDB_DB = 'thuoclao'
 INFLUXDB_USER = 'admin'
 INFLUXDB_USER_PASSWORD = 'admin'
 INFLUXDB_HOST = 'influxdb'
 INFLUXDB_PORT = "8086"
-# BACKGROUND_TASK_RUN_ASYNC = True
+
+# Authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
+
+# MTicket
+MTICKET_TOKEN = "c84964fd0ab36e4b044f7f4672e3fa7ce4fecf830343eeef"
+MTICKET_SERVER = "192.168.100.23"
+LIST_TOPIC_LINK = "http://{}/api/list_topic".format(MTICKET_SERVER)
+CREATE_TOPIC_LINK = "http://{}/api/tk_create".format(MTICKET_SERVER)
+
+# Redis
+REDIS_SERVER = 'redis:6379'

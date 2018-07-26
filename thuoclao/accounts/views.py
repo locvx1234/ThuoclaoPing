@@ -1,12 +1,30 @@
-from django.shortcuts import render
-from django.template import loader
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
-from .models import UserProfile
-from .forms import UserForm, UserProfileForm
 from django.contrib.admin.models import LogEntry
+from django.contrib.auth import (
+    authenticate,
+    login,
+)
+
+from .forms import UserForm, UserProfileForm, UserRegisterForm
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect("/")
+    form = UserRegisterForm(request.POST or None)
+    print(form.is_valid())
+    if form.is_valid():
+        user = form.save(commit=False)
+        password = form.cleaned_data.get('password')
+        user.set_password(password)
+        user.save()
+        authenticate(username=user.username, password=user.password)
+        login(request, user)
+        return redirect("/")
+    return render(request, 'accounts/reg_form.html', {"form": form})
 
 
 def view_profile(request, pk=None):
@@ -16,7 +34,7 @@ def view_profile(request, pk=None):
     else:
         user = request.user
         log = LogEntry.objects.select_related().all().order_by("id")
-    context = {'user': user, 'form': form, 'log':log}
+    context = {'user': user, 'form': form, 'log': log}
     return render(request, 'accounts/profile.html', context)
 
 
@@ -29,12 +47,12 @@ def edit_profile(request):
                 handle_uploaded_file(request.FILES['image'])
             user_form.save()
             profile_form.save()
-    return HttpResponseRedirect(reverse('view_profile'))    
+    return HttpResponseRedirect(reverse('view_profile'))
 
 
 def handle_uploaded_file(f):
     """
-    Write file uploaded 
+    Write file uploaded
     """
     path = "thuoclao/media/profile_image/" + f.name
     file = open(path, 'wb+')

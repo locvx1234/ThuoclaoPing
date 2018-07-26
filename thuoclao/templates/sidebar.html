@@ -25,10 +25,14 @@
       <h3>General</h3>
       <ul class="nav side-menu">
         <li><a href="{% url 'index' %}"><i class="fa fa-dashboard"></i> Dashboard </a></li>
-        <li><a href="{% url 'host' %}"><i class="fa fa-edit"></i> Host </a></li>
-        <li><a href="{% url 'service' %}"><i class="fa fa-edit"></i> Service </a></li>
+        <li><a><i class="fa fa-edit"></i> Host <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="{% url 'host' service_name='ping' %}">PING</a></li>
+            <li><a href="{% url 'host' service_name='http' %}">HTTP</a></li>
+          </ul>
+        </li>
         <li><a href="{% url 'alert' %}"><i class="fa fa-bell-o"></i> Alert </a></li>
-        <li><a><i class="fa fa-desktop"></i> Information </a></li>
+        <li><a href="{% url 'information' %}"><i class="fa fa-desktop"></i> Information </a></li>
         <li><a><i class="fa fa-table"></i> Report </a></li>
       </ul>
     </div>

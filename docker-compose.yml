@@ -28,6 +28,7 @@ services:
     depends_on:
       - db
       - influxdb
+      - redis
   influxdb:
     image: influxdb:1.5
     restart: always
@@ -45,3 +46,11 @@ services:
       - "3000:3000"
     depends_on:
       - influxdb
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - .:/code
+    ports:
+      - "6379:6379"
+

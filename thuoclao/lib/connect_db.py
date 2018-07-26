@@ -1,8 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, SmallInteger, String, create_engine
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, aliased
-from sqlalchemy import event
+from sqlalchemy.orm import Session
 
 
 Base = declarative_base()
@@ -192,7 +191,7 @@ class GetDataFping():
                 if service.service.service_name == "PING":
                     ips.append(service.host.ip_address)
             dict_users[user.username] = ips
-        return  dict_users
+        return dict_users
 
 
 e = create_engine("mysql+pymysql://thuoclao:thuoclao@192.168.30.61/thuoclao", echo=True)
@@ -200,5 +199,3 @@ s = Session(e)
 SQL = GetDataFping()
 data = SQL.get_data_from_mysql()
 print(data)
-
-

@@ -2,6 +2,7 @@
 **/__pycache__/
 **/migrations/
 .idea/*
+.tox/
 .DS_Store
 .vscode
 dockermysql/
