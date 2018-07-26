@@ -41,7 +41,7 @@ Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
 Then import database
 
 ```
-mysql -h <mysql-server> -u<username> -p thuoclao < initdb.d/thuoclao_init.sql
+mysql -h <mysql-server> -u<username> -p thuoclao < docker-entrypoint-initdb.d/thuoclao_init.sql
 ```
 
 Influx DB: 
