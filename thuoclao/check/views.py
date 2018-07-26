@@ -142,7 +142,7 @@ def cpu_util(request):
 
 def ram_info(request):
     ram_info = psutil.virtual_memory()
-    ram_used = (ram_info.used/ram_info.total)*100
+    ram_used = (ram_info.used / ram_info.total) * 100
     ram_free = 100 - ram_used
     context = {'ram_used': '{}'.format(round(ram_used, 2)),
                'ram_free': '{}'.format(round(ram_free, 2))}
@@ -275,7 +275,6 @@ def host(request, service_name):
                                    ok=ok, warning=warning, critical=critical)
             if service_name == 'http':
                 group_data = Group(user=user, service=service, group_name=group_name, description=description)
-            
             group_data.save()
 
             if service_name == 'ping':

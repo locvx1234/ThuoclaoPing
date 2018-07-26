@@ -3,7 +3,6 @@ import statistics
 
 from lib import utils
 from thuoclao import settings
-from influxdb import InfluxDBClient
 
 
 class Display(utils.Auth):
@@ -126,7 +125,7 @@ class Info(utils.Auth):
                                            'FROM  "monitor"."queryExecutor" '
                                            'GROUP BY time(1d)', epoch='ms')
         results_avg_query = list(avg_query.get_points(measurement='queryExecutor'))
-        return round(results_avg_query[0]['mean']/1000000000, 2)
+        return round(results_avg_query[0]['mean'] / 1000000000, 2)
 
     def http_queries(self):
         http_queries = self.client_info.query('SELECT non_negative_derivative'
