@@ -83,15 +83,15 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'thuoclao',
-        # 'USER': 'root',
-        # 'PASSWORD': '123456',
-        # 'HOST': 'db',
         'NAME': 'thuoclao',
-        'USER': 'thuoclao',
-        'PASSWORD': 'thuoclao',
-        'HOST': '192.168.30.61',
-        'PORT': '3306'
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': 'db',
+#        'NAME': 'thuoclao',
+#        'USER': 'thuoclao',
+#        'PASSWORD': 'thuoclao',
+#        'HOST': '192.168.30.61',
+#        'PORT': '3306'
     }
 }
 
@@ -154,9 +154,9 @@ TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
 
 # Influx config
 INFLUXDB_DB = 'thuoclao'
-INFLUXDB_USER = 'minhkma'
-INFLUXDB_USER_PASSWORD = 'minhkma'
-INFLUXDB_HOST = '192.168.30.67'
+INFLUXDB_USER = 'admin'
+INFLUXDB_USER_PASSWORD = 'admin'
+INFLUXDB_HOST = 'influxdb'
 INFLUXDB_PORT = "8086"
 
 # Authentication
@@ -175,4 +175,4 @@ LIST_TOPIC_LINK = "http://{}/api/list_topic".format(MTICKET_SERVER)
 CREATE_TOPIC_LINK = "http://{}/api/tk_create".format(MTICKET_SERVER)
 
 # Redis
-REDIS_SERVER = 'localhost:6379'
+REDIS_SERVER = 'redis:6379'
