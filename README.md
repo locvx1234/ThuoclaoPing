@@ -1,6 +1,6 @@
 # ThuoclaoPing
 
-
+``A ThuocLaoPing written in Python (Work-In-Progress)``
  
 Environment 
 -----------
@@ -36,7 +36,7 @@ mysql -u root -p
 > exit
 ```
 
-Edit `DATABASES` value in the `/code/thuoclao/thuoclao/settings.py` file
+Edit `DATABASES` value from line 90 to line 94 and comment line 86 to 89 in the `/code/thuoclao/thuoclao/settings.py` file
 
 Then import database
 
@@ -70,7 +70,7 @@ Create DB user command `influx`
 ```sh
 influx
 > CREATE DATABASE thuoclao
-> CREATE USER "thuoclao" WITH PASSWORD 'thuoclao' WITH ALL PRIVILEGES
+> CREATE USER "admin" WITH PASSWORD 'admin' WITH ALL PRIVILEGES
 > exit 
 ```
 
@@ -86,7 +86,7 @@ Restart Influxdb
 systemctl restart influxdb
 ```
 
-Then edit DATABASE_INFLUX value in `/code/thuoclao/thuoclao/settings.py` file
+Then edit DATABASE_INFLUX value from line 156 to 160  in `/code/thuoclao/thuoclao/settings.py` file
 
 Supervisor:
 

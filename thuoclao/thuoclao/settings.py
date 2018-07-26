@@ -88,9 +88,9 @@ DATABASES = {
         'PASSWORD': '123456',
         'HOST': 'db',
 #        'NAME': 'thuoclao',
-#        'USER': 'thuoclao',
-#        'PASSWORD': 'thuoclao',
-#        'HOST': '192.168.30.61',
+#        'USER': 'root',
+#        'PASSWORD': '123456',
+#        'HOST': 'localhost',
 #        'PORT': '3306'
     }
 }
@@ -145,12 +145,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'thuoclao/media')
 
 # Email send notification
-FROM_EMAIL = 'poisonous1205@gmail.com'
-PASSWD_MAIL = 'minhnguyen'
+FROM_EMAIL = 'thuoclaoping@gmail.com'
+PASSWD_MAIL = 'thu0c_la0'
 SMTP_SERVER = 'smtp.gmail.com:587'
 
 # Telegram token
-TOKEN = '518593888:AAExHxExaTD9XzY9WAkRnIDexjbkGDhsnO4'
+TOKEN = '654284357:AAHqXzYGxpmdqKcWzm7WRcFVCia0jL9Szpg'
 
 # Influx config
 INFLUXDB_DB = 'thuoclao'
