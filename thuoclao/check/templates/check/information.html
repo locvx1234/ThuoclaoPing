@@ -15,6 +15,7 @@
         <div id="disk_info" class="graph_disk" style="height: 350px; width: 48%; float: right"></div>
     </div>
     <div id="space" class="graph_space" style="height: 20px; width: 100%; float: left"></div>
+
     <div class="row tile_count">
       <div class="col-md-4 col-sm-6 col-xs-8 tile_stats_count">
         <span class="count_top"><i class="fa fa-briefcase"></i> Measurement Count</span>
@@ -172,12 +173,12 @@
     <div class="x_content">
         <div id="chartContainer3" class="graph_client_errors" style="height: 300px; width: 100%;"></div>
     </div>
+
 </div>
 {% endblock content %}
 
 {% block javascripts %}
   {{ block.super}}
-
   <script src="{% static '/build/js/information.js' %}"></script>
   <script src="{% static '/vendors/canvasjs-non-commercial-2.0/canvasjs.min.js' %}"></script>
 {% endblock javascripts %}

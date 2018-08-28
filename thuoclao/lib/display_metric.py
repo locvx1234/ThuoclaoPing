@@ -110,6 +110,7 @@ class Info(utils.Auth):
         series_total = self.client_info.query('SELECT mean("numSeries")'
                                               ' FROM \"database\"'
                                               ' WHERE time > now() - 24h', epoch='ms')
+
         results_series_total = list(series_total.get_points(measurement='database'))
         return round(results_series_total[0]['mean'], 0)
 
@@ -117,6 +118,7 @@ class Info(utils.Auth):
         measure_total = self.client_info.query('SELECT mean("numMeasurements")'
                                                ' FROM \"database\"'
                                                ' WHERE time > now() - 24h', epoch='ms')
+
         results_measure_total = list(measure_total.get_points(measurement='database'))
         return round(results_measure_total[0]['mean'], 0)
 
@@ -150,3 +152,4 @@ class Info(utils.Auth):
                                                     ' GROUP BY time(1m)', epoch='ms')
         results_http_server_errors = list(http_server_errors.get_points(measurement='httpd'))
         return results_http_server_errors
+

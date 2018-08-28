@@ -37,6 +37,11 @@ def index(request):
     else:
         return HttpResponseRedirect('/accounts/login')
 
+def information(request):
+    if request.user.is_authenticated:
+        return render(request, 'check/information.html')
+    else:
+        return HttpResponseRedirect('/accounts/login')
 
 def information(request):
     if request.user.is_authenticated:
@@ -179,6 +184,16 @@ def total_info_influxdb(request):
         json_data = json.dumps(context)
         return HttpResponse(json_data, content_type="application/json")
 
+def total_info_influxdb(request):
+    if request.is_ajax():
+        info = Info()
+        total_measuere = info.series_total()
+        total_series = info.series_total()
+        avg_query = info.avg_query()
+        context = {'total_measuere': total_measuere, 'total_series': total_series, 'avg_query': avg_query}
+        json_data = json.dumps(context)
+        print(json_data)
+        return HttpResponse(json_data, content_type="application/json")
 
 def view_html(request):
     context = {}
@@ -251,6 +266,7 @@ def host(request, service_name):
                                    ok=ok, warning=warning, critical=critical)
             if service_name == 'http':
                 group_data = Group(user=user, service=service, group_name=group_name, description=description)
+
             group_data.save()
 
             if service_name == 'ping':
