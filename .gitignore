@@ -7,3 +7,4 @@
 .vscode
 dockermysql/
 docker-influxdb/
+*.egg-info/

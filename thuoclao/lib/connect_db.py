@@ -194,8 +194,8 @@ class GetDataFping():
         return dict_users
 
 
-e = create_engine("mysql+pymysql://thuoclao:thuoclao@192.168.30.61/thuoclao", echo=True)
-s = Session(e)
-SQL = GetDataFping()
-data = SQL.get_data_from_mysql()
-print(data)
+# e = create_engine("mysql+pymysql://thuoclao:thuoclao@192.168.30.61/thuoclao", echo=True)
+# s = Session(e)
+# SQL = GetDataFping()
+# data = SQL.get_data_from_mysql()
+# print(data)
