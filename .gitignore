@@ -8,3 +8,4 @@
 dockermysql/
 docker-influxdb/
 *.egg-info/
+*.log

@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import psutil
+import logging
 
 from django.shortcuts import render
 from django.template import loader
@@ -22,6 +23,9 @@ from lib.display_metric import Display
 from lib.display_metric import Info
 from .serializers import GroupSerializer, GroupAttributeSerializer, HostSerializer, HostAttributeSerializer
 from thuoclao import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -47,7 +51,7 @@ def information(request):
                                'bytes_sent': network_stats[str(name)].bytes_sent,
                                'bytes_recv': network_stats[str(name)].bytes_recv})
         context = {'interfaces': interfaces}
-        print(context)
+        logger.debug(context)
         return render(request, 'check/information.html', context)
     else:
         return HttpResponseRedirect('/accounts/login')
@@ -59,7 +63,8 @@ def help(request):
         context["notification"] = "MTicket token not set"
     try:
         topics = requests.get(settings.LIST_TOPIC_LINK, timeout=5).json()
-    except requests.exceptions.ConnectTimeout:
+    except (requests.exceptions.ConnectTimeout, requests.exceptions.ConnectionError):
+        logger.error("Cannot connect to MTicket")
         topics = None
         context['notification'] = "Disconnect MTicket server"
     context["topics"] = topics
@@ -83,7 +88,6 @@ def get_data(request, pk_host, service_name, query_time):
     if service_name == 'ping':
         ip_addr = host.host_attribute_set.get(attribute_name='ip_address').value
         res = display.select_ping(ip_addr, query_time)
-        print(res)
     if service_name == 'http':
         url = host.host_attribute_set.get(attribute_name='url').value
         res = display.select_http(url, query_time)
@@ -239,6 +243,7 @@ def host(request, service_name):
                 host_attr_data = Host_attribute(host=host_data, attribute_name="url",
                                                 value=url, type_value=5)
             host_attr_data.save()
+            logger.info(hostname + " added")
 
         if request.POST.get('group_name'):  # add group
             group_name = request.POST.get('group_name')
@@ -270,6 +275,7 @@ def host(request, service_name):
                                                       value=interval_check, type_value=0)
                 attr_interval_check.save()
 
+            logger.info(group_name + " added")
         # update background tasks
         os.system('supervisorctl restart celery')
         return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
@@ -282,6 +288,7 @@ def delete_host(request, service_name, host_id):
     host_query = Host.objects.filter(id=host_id)
     host_query.delete()
 
+    logger.info(host_query.hostname + " deleted")
     # update background tasks
     os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
@@ -291,6 +298,7 @@ def delete_group(request, service_name, group_id):
     group_query = Group.objects.filter(id=group_id)
     group_query.delete()
 
+    logger.info(group_query.group_name + " deleted")
     # update background tasks
     os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
@@ -314,6 +322,7 @@ def edit_host(request, service_name, host_id):
         host_query.save()
         host_attr_data.save()
 
+        logger.info(host_query.hostname + " updated")
         # update background tasks
         os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
@@ -343,6 +352,7 @@ def edit_group(request, service_name, group_id):
             attr_interval_check.value = request.POST.get('interval_check')
             attr_interval_check.save()
 
+        logger.info(group_query.group_name + " updated")
         # update background tasks
         os.system('supervisorctl restart celery')
     return HttpResponseRedirect(reverse('host', kwargs={'service_name': service_name}))
@@ -353,7 +363,7 @@ def alert(request):
         alert_data = Alert.objects.get(user=request.user)
     except Alert.DoesNotExist:
         alert_data = None
-
+        logger.warning("Alert not configured")
     if request.method == 'POST':
         alert_form = AlertForm(request.POST, instance=alert_data)
         if alert_form.is_valid():

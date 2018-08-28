@@ -172,7 +172,6 @@ async def http_exec(loop, url, interval, hostname, group_name, user):
 
 
 async def http():
-    logger.info("run def http")
     data_http = get_http()
     print(data_http)
     loop = asyncio.get_event_loop()
@@ -189,7 +188,6 @@ async def http():
 
 
 async def fping():
-    logger.info("run def ping")
     loop = asyncio.get_event_loop()
     data_ping = get_fping()
     print(data_ping)

@@ -83,14 +83,14 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thuoclao',
-        'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': 'db',
         # 'NAME': 'thuoclao',
         # 'USER': 'root',
         # 'PASSWORD': '123456',
-        # 'HOST': 'localhost',
+        # 'HOST': 'db',
+        'NAME': 'thuoclao',
+        'USER': 'root',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
         # 'PORT': '3306'
     }
 }
@@ -154,9 +154,10 @@ TOKEN = '654284357:AAHqXzYGxpmdqKcWzm7WRcFVCia0jL9Szpg'
 
 # Influx config
 INFLUXDB_DB = 'thuoclao'
-INFLUXDB_USER = 'admin'
-INFLUXDB_USER_PASSWORD = 'admin'
-INFLUXDB_HOST = 'influxdb'
+INFLUXDB_USER = 'minhkma'
+INFLUXDB_USER_PASSWORD = 'minhkma'
+# INFLUXDB_HOST = 'influxdb'
+INFLUXDB_HOST = '192.168.30.67'
 INFLUXDB_PORT = "8086"
 
 # Authentication
@@ -176,3 +177,53 @@ CREATE_TOPIC_LINK = "http://{}/api/tk_create".format(MTICKET_SERVER)
 
 # Redis
 REDIS_SERVER = 'redis:6379'
+
+# Log
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'logfile': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'log/thuoclaoping.log'),
+            'maxBytes': 1024*1024*5, # 5MB
+            'backupCount': 0,
+            'formatter': 'verbose',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s - %(message)s'
+        },
+    },
+    'loggers': {
+        'check.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'check.views': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'check.models': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
