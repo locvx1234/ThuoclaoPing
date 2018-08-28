@@ -83,14 +83,14 @@ WSGI_APPLICATION = 'thuoclao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'thuoclao',
-        # 'USER': 'root',
-        # 'PASSWORD': '123456',
-        # 'HOST': 'db',
         'NAME': 'thuoclao',
         'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'PASSWORD': '123456',
+        'HOST': 'db',
+        # 'NAME': 'thuoclao',
+        # 'USER': 'root',
+        # 'PASSWORD': 'password',
+        # 'HOST': 'localhost',
         # 'PORT': '3306'
     }
 }
@@ -156,8 +156,8 @@ TOKEN = '654284357:AAHqXzYGxpmdqKcWzm7WRcFVCia0jL9Szpg'
 INFLUXDB_DB = 'thuoclao'
 INFLUXDB_USER = 'minhkma'
 INFLUXDB_USER_PASSWORD = 'minhkma'
-# INFLUXDB_HOST = 'influxdb'
-INFLUXDB_HOST = '192.168.30.67'
+INFLUXDB_HOST = 'influxdb'
+# INFLUXDB_HOST = '192.168.30.67'
 INFLUXDB_PORT = "8086"
 
 # Authentication
