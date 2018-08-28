@@ -39,5 +39,4 @@ urlpatterns = [
     url(r'^information$', views.information, name='information'),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # url(r'^api/groups/$', views., name='groups'),
 ]

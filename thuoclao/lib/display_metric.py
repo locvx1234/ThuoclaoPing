@@ -73,7 +73,7 @@ class Display(utils.Auth):
                                         'and time > now() -5m '
                                         .format(self.hostname, self.group, self.username))
         results_status = list(data_status.get_points(measurement='http'))
-        # print(results_status)
+
         for res in results_status:
             status_codes.append(res["code"])
         try:

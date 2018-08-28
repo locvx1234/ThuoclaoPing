@@ -69,14 +69,9 @@ def help(request):
         content = request.POST['content']
         topic = request.POST['topic']
         file_attach = request.POST['attach']
-        print(file_attach)
-        files = {'attach': open('/home/locvu/Desktop/pele.jpg', 'rb')}
         data = {'title': title, 'topic': topic, 'content': content,
                 'auth_token': settings.MTICKET_TOKEN}
         response = requests.post(settings.CREATE_TOPIC_LINK, data=data)
-        print(files)
-        print(response)
-        # print(response.text)
         context["response"] = response
         return HttpResponseRedirect('/help')
     return render(request, 'help.html', context)
@@ -84,7 +79,6 @@ def help(request):
 
 def get_data(request, pk_host, service_name, query_time):
     host = Host.objects.get(id=pk_host)
-    # print(host)
     display = Display(host.group.group_name, host.hostname, host.group.user.username)
     if service_name == 'ping':
         ip_addr = host.host_attribute_set.get(attribute_name='ip_address').value
@@ -93,35 +87,28 @@ def get_data(request, pk_host, service_name, query_time):
     if service_name == 'http':
         url = host.host_attribute_set.get(attribute_name='url').value
         res = display.select_http(url, query_time)
-        # pprint(res)
     json_data = json.dumps(res)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def get_http_queries(request):
-    # print("minhkma")
     info = Info()
     http_queries = info.http_queries()
     json_data = json.dumps(http_queries)
-    # print(json_data)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def server_errors(request):
-    # print("minhkma")
     info = Info()
     server_errors = info.http_server_errors()
     json_data = json.dumps(server_errors)
-    # print(json_data)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def client_errors(request):
-    # print("minhkma")
     info = Info()
     client_errors = info.http_client_errors()
     json_data = json.dumps(client_errors)
-    # print(json_data)
     return HttpResponse(json_data, content_type="application/json")
 
 
@@ -159,21 +146,12 @@ def disk_info(request):
 
 
 def network_info(request, interface):
-    # interfaces = []
-    print('minhkma')
     network_stats = psutil.net_io_counters(pernic=True)[interface]
     context = {'name_interface': interface,
                'bytes_sent': network_stats.bytes_sent,
                'bytes_recv': network_stats.bytes_recv}
     json_data = json.dumps(context)
     return HttpResponse(json_data, content_type="application/json")
-    # for name in network_stats:
-    #     interfaces.append({'name_interface': name,
-    #                        'packets_sent': network_stats[name].packets_sent,
-    #                        'bytes_recv': network_stats[name].packets_sent})
-    # context = interfaces
-    # json_data = json.dumps(context)
-    # return HttpResponse(json_data, content_type="application/json")
 
 
 def total_parameter(request):
@@ -186,7 +164,6 @@ def total_parameter(request):
         total_critical = hosts.filter(status=2).count()
         context = {'total_ok': total_ok, 'total_warning': total_warning, 'total_critical': total_critical}
         json_data = json.dumps(context)
-        print(json_data)
         return HttpResponse(json_data, content_type="application/json")
 
 
@@ -200,7 +177,6 @@ def total_info_influxdb(request):
                    'total_series': total_series,
                    'avg_query': '{}s'.format(avg_query)}
         json_data = json.dumps(context)
-        print(json_data)
         return HttpResponse(json_data, content_type="application/json")
 
 

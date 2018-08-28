@@ -3,9 +3,6 @@
 {% block title %} Host {% endblock title %}
 {% load static %}
 {% block stylesheets %}
-<!-- <link rel="stylesheet" type="text/css" href="{% static '/build/css/config.css' %}"> -->
-
-<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"> -->
 <link href="{% static '/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
 <link href="{% static '/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
 <link href="{% static '/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
@@ -451,10 +448,7 @@
         });
     } );    
   </script>
-  <!-- <script src="{% static '/build/js/ping.js' %}"></script> -->
   <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-  <!-- <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> -->
-  <!--<script src="{% static '/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>-->
   <script src="{% static '/vendors/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
   <script src="{% static '/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js' %}"></script>
   <script src="{% static '/vendors/datatables.net-buttons/js/buttons.flash.min.js' %}"></script>
@@ -465,7 +459,4 @@
   <script src="{% static '/vendors/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
   <script src="{% static '/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js' %}"></script>
   <script src="{% static '/vendors/datatables.net-scroller/js/dataTables.scroller.min.js' %}"></script>
-  <script src="{% static '/vendors/jszip/dist/jszip.min.js' %}"></script>
-  <script src="{% static 'c/vendors/pdfmake/build/pdfmake.min.js' %}"></script>
-  <script src="{% static '/vendors/pdfmake/build/vfs_fonts.js' %}"></script>
 {% endblock javascripts %}
