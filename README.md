@@ -21,7 +21,6 @@ sudo apt-get install python-dev python3-dev \
      python-pip
 ```
 
-
 Install
 -------
 
