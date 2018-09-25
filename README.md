@@ -13,6 +13,15 @@ apt-get update
 apt-get install python3.6
 ```
 
+Addition  
+```sh
+sudo apt-get install python-dev python3-dev \
+     build-essential libssl-dev libffi-dev \
+     libxml2-dev libxslt1-dev zlib1g-dev \
+     python-pip
+```
+
+
 Install
 -------
 
