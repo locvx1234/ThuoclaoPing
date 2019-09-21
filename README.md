@@ -1,6 +1,6 @@
 # ThuoclaoPing
 
-``A ThuocLaoPing written in Python (Work-In-Progress)``
+``A ThuocLaoPing written in Python ``
  
 Environment 
 -----------
