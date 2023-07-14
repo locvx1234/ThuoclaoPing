@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.12.0b3
 MAINTAINER locvu "locvx1234@gmail.com"
 ENV PYTHONUNBUFFERD 1
 RUN mkdir /code
